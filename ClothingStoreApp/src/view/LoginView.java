@@ -2,9 +2,8 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import controller.LoginController;
-
-
 
 public class LoginView extends JFrame {
     private JTextField txtUsername;
@@ -12,11 +11,13 @@ public class LoginView extends JFrame {
     private JButton btnLogin;
     private JTabbedPane tabbedPane;
     private LoginController controller;
+    private JLabel loadingLabel;
     
-    // Màu nâu giống ảnh
+    // Màu sắc
     private static final Color BROWN_HEADER = new Color(139, 90, 60);
     private static final Color LIGHT_BROWN = new Color(222, 204, 190);
     private static final Color DARKER_BROWN = new Color(160, 120, 90);
+    private static final Color ACCENT_COLOR = new Color(184, 134, 100);
     private static final Color WHITE = Color.WHITE;
     
     public LoginView() {
@@ -31,132 +32,166 @@ public class LoginView extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         
-        // Main container
-        JPanel mainContainer = new JPanel(new BorderLayout());
+        // Main container với gradient background
+        JPanel mainContainer = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int w = getWidth(), h = getHeight();
+                GradientPaint gp = new GradientPaint(0, 0, LIGHT_BROWN, 0, h, WHITE);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+            }
+        };
         
-        // Header với logo và title
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(BROWN_HEADER);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
-        
-        // Logo (icon áo)
-        JLabel lblLogo = new JLabel("👕", SwingConstants.CENTER);
-        lblLogo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 60));
-        lblLogo.setForeground(WHITE);
-        
-        JLabel lblTitle = new JLabel("FASHION STORE", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 32));
-        lblTitle.setForeground(WHITE);
-        
-        JPanel logoTitlePanel = new JPanel(new GridLayout(2, 1, 0, 10));
-        logoTitlePanel.setBackground(BROWN_HEADER);
-        logoTitlePanel.add(lblLogo);
-        logoTitlePanel.add(lblTitle);
-        
-        headerPanel.add(logoTitlePanel, BorderLayout.CENTER);
+        // Header
+        JPanel headerPanel = createHeader();
         
         // Tabbed Pane
         tabbedPane = new JTabbedPane();
-        tabbedPane.setFont(new Font("Arial", Font.BOLD, 14));
+        tabbedPane.setFont(new Font("Arial", Font.BOLD, 15));
         tabbedPane.setBackground(WHITE);
+        tabbedPane.setForeground(DARKER_BROWN);
         
         // Tab Đăng Nhập
         JPanel loginPanel = createLoginPanel();
-        tabbedPane.addTab("ĐĂNG NHẬP", loginPanel);
+        tabbedPane.addTab("  ĐĂNG NHẬP  ", loginPanel);
         
         // Tab Đăng Ký
         JPanel registerPanel = createRegisterPanel();
-        tabbedPane.addTab("ĐĂNG KÝ", registerPanel);
+        tabbedPane.addTab("  ĐĂNG KÝ  ", registerPanel);
         
         mainContainer.add(headerPanel, BorderLayout.NORTH);
         mainContainer.add(tabbedPane, BorderLayout.CENTER);
         
+        // Loading label
+        loadingLabel = new JLabel("", SwingConstants.CENTER);
+        loadingLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        loadingLabel.setForeground(DARKER_BROWN);
+        loadingLabel.setVisible(false);
+        mainContainer.add(loadingLabel, BorderLayout.SOUTH);
+        
         add(mainContainer);
+    }
+    
+    private JPanel createHeader() {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+        header.setBorder(BorderFactory.createEmptyBorder(20, 20, 15, 20));
+        
+        // Logo
+        JLabel lblLogo = new JLabel("👕", SwingConstants.CENTER);
+        lblLogo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 45));
+        lblLogo.setForeground(BROWN_HEADER);
+        
+        JLabel lblTitle = new JLabel("FASHION STORE", SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 28));
+        lblTitle.setForeground(BROWN_HEADER);
+        
+        JLabel lblSubtitle = new JLabel("Hệ Thống Quản Lý Shop Quần Áo", SwingConstants.CENTER);
+        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 12));
+        lblSubtitle.setForeground(DARKER_BROWN);
+        
+        JPanel logoTitlePanel = new JPanel(new GridLayout(3, 1, 0, 5));
+        logoTitlePanel.setOpaque(false);
+        logoTitlePanel.add(lblLogo);
+        logoTitlePanel.add(lblTitle);
+        logoTitlePanel.add(lblSubtitle);
+        
+        header.add(logoTitlePanel, BorderLayout.CENTER);
+        
+        return header;
     }
     
     private JPanel createLoginPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(50, 80, 50, 80));
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
         
-        // Chào mừng
+        // Icon và tiêu đề
+        JLabel lblIcon = new JLabel("🔐", SwingConstants.CENTER);
+        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 35));
+        lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
         JLabel lblWelcome = new JLabel("Chào mừng trở lại!");
-        lblWelcome.setFont(new Font("Arial", Font.BOLD, 26));
+        lblWelcome.setFont(new Font("Arial", Font.BOLD, 24));
+        lblWelcome.setForeground(BROWN_HEADER);
         lblWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        JLabel lblSubtitle = new JLabel("Đăng nhập để tiếp tục");
-        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblSubtitle.setForeground(DARKER_BROWN);
+        JLabel lblSubtitle = new JLabel("Đăng nhập để tiếp tục quản lý");
+        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblSubtitle.setForeground(ACCENT_COLOR);
         lblSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
+        panel.add(lblIcon);
+        panel.add(Box.createVerticalStrut(10));
         panel.add(lblWelcome);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(5));
         panel.add(lblSubtitle);
-        panel.add(Box.createVerticalStrut(50));
-        
-        // Username
-        JLabel lblUsername = new JLabel("Tên đăng nhập");
-        lblUsername.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblUsername.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        txtUsername = new JTextField();
-        txtUsername.setMaximumSize(new Dimension(400, 45));
-        txtUsername.setFont(new Font("Arial", Font.PLAIN, 16));
-        txtUsername.setBackground(LIGHT_BROWN);
-        txtUsername.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(DARKER_BROWN, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        
-        panel.add(lblUsername);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(txtUsername);
-        panel.add(Box.createVerticalStrut(25));
-        
-        // Password
-        JLabel lblPassword = new JLabel("Mật khẩu");
-        lblPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblPassword.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        txtPassword = new JPasswordField();
-        txtPassword.setMaximumSize(new Dimension(400, 45));
-        txtPassword.setFont(new Font("Arial", Font.PLAIN, 16));
-        txtPassword.setBackground(LIGHT_BROWN);
-        txtPassword.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(DARKER_BROWN, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        
-        panel.add(lblPassword);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(txtPassword);
-        panel.add(Box.createVerticalStrut(40));
-        
-        // Button Đăng Nhập
-        btnLogin = new JButton("ĐĂNG NHẬP");
-        btnLogin.setMaximumSize(new Dimension(400, 50));
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 16));
-        btnLogin.setBackground(DARKER_BROWN);
-        btnLogin.setForeground(WHITE);
-        btnLogin.setFocusPainted(false);
-        btnLogin.setBorderPainted(false);
-        btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnLogin.addActionListener(e -> controller.handleLogin(
-            txtUsername.getText(), 
-            new String(txtPassword.getPassword())
-        ));
-        
-        panel.add(btnLogin);
         panel.add(Box.createVerticalStrut(30));
         
-        // Tài khoản mặc định
-        JLabel lblDefaultAccount = new JLabel("Tài khoản mặc định: admin / admin");
-        lblDefaultAccount.setFont(new Font("Arial", Font.ITALIC, 12));
-        lblDefaultAccount.setForeground(DARKER_BROWN);
-        lblDefaultAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(lblDefaultAccount);
+        // Username
+        txtUsername = new JTextField(20);
+        JPanel usernamePanel = createInputPanel("👤", txtUsername, "Tên đăng nhập", false);
+        panel.add(usernamePanel);
+        panel.add(Box.createVerticalStrut(15));
+        
+        // Password
+        txtPassword = new JPasswordField(20);
+        JPanel passwordPanel = createInputPanel("🔒", txtPassword, "Mật khẩu", true);
+        panel.add(passwordPanel);
+        panel.add(Box.createVerticalStrut(25));
+        
+        // Button Đăng Nhập
+        btnLogin = createStyledButton("ĐĂNG NHẬP");
+        btnLogin.addActionListener(e -> {
+            String username = txtUsername.getText();
+            String password = new String(txtPassword.getPassword());
+            
+            // Xóa placeholder nếu chưa nhập
+            if (username.equals("Tên đăng nhập")) username = "";
+            if (password.equals("Mật khẩu")) password = "";
+            
+            controller.handleLogin(username, password);
+        });
+        panel.add(btnLogin);
+        panel.add(Box.createVerticalStrut(20));
+        
+        // Divider
+        JSeparator separator = new JSeparator();
+        separator.setMaximumSize(new Dimension(450, 1));
+        separator.setForeground(LIGHT_BROWN);
+        panel.add(separator);
+        panel.add(Box.createVerticalStrut(20));
+        
+        // Thông tin tài khoản mặc định
+        JPanel infoPanel = new JPanel();
+        infoPanel.setBackground(LIGHT_BROWN);
+        infoPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(ACCENT_COLOR, 1),
+            BorderFactory.createEmptyBorder(12, 15, 12, 15)
+        ));
+        infoPanel.setMaximumSize(new Dimension(450, 70));
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        
+        JLabel lblInfo = new JLabel("💡 Tài khoản mặc định");
+        lblInfo.setFont(new Font("Arial", Font.BOLD, 12));
+        lblInfo.setForeground(DARKER_BROWN);
+        lblInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JLabel lblAccount = new JLabel("admin / admin");
+        lblAccount.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblAccount.setForeground(BROWN_HEADER);
+        lblAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        infoPanel.add(lblInfo);
+        infoPanel.add(Box.createVerticalStrut(5));
+        infoPanel.add(lblAccount);
+        
+        panel.add(infoPanel);
         
         return panel;
     }
@@ -165,102 +200,172 @@ public class LoginView extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(50, 80, 50, 80));
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
         
-        // Tiêu đề
+        // Icon và tiêu đề
+        JLabel lblIcon = new JLabel("📝", SwingConstants.CENTER);
+        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 35));
+        lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
         JLabel lblTitle = new JLabel("Tạo tài khoản mới");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 26));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTitle.setForeground(BROWN_HEADER);
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        JLabel lblSubtitle = new JLabel("Đăng ký để bắt đầu");
-        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblSubtitle.setForeground(DARKER_BROWN);
+        JLabel lblSubtitle = new JLabel("Đăng ký để bắt đầu sử dụng");
+        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblSubtitle.setForeground(ACCENT_COLOR);
         lblSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        panel.add(lblTitle);
+        panel.add(lblIcon);
         panel.add(Box.createVerticalStrut(10));
+        panel.add(lblTitle);
+        panel.add(Box.createVerticalStrut(5));
         panel.add(lblSubtitle);
-        panel.add(Box.createVerticalStrut(40));
+        panel.add(Box.createVerticalStrut(30));
         
         // Username
-        JLabel lblUsername = new JLabel("Tên đăng nhập");
-        lblUsername.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblUsername.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JTextField txtRegUsername = new JTextField();
-        txtRegUsername.setMaximumSize(new Dimension(400, 45));
-        txtRegUsername.setFont(new Font("Arial", Font.PLAIN, 16));
-        txtRegUsername.setBackground(LIGHT_BROWN);
-        txtRegUsername.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(DARKER_BROWN, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        
-        panel.add(lblUsername);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(txtRegUsername);
-        panel.add(Box.createVerticalStrut(20));
+        JTextField txtRegUsername = new JTextField(20);
+        JPanel usernamePanel = createInputPanel("👤", txtRegUsername, "Tên đăng nhập", false);
+        panel.add(usernamePanel);
+        panel.add(Box.createVerticalStrut(15));
         
         // Password
-        JLabel lblPassword = new JLabel("Mật khẩu");
-        lblPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblPassword.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JPasswordField txtRegPassword = new JPasswordField();
-        txtRegPassword.setMaximumSize(new Dimension(400, 45));
-        txtRegPassword.setFont(new Font("Arial", Font.PLAIN, 16));
-        txtRegPassword.setBackground(LIGHT_BROWN);
-        txtRegPassword.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(DARKER_BROWN, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        
-        panel.add(lblPassword);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(txtRegPassword);
-        panel.add(Box.createVerticalStrut(20));
+        JPasswordField txtRegPassword = new JPasswordField(20);
+        JPanel passwordPanel = createInputPanel("🔒", txtRegPassword, "Mật khẩu", true);
+        panel.add(passwordPanel);
+        panel.add(Box.createVerticalStrut(15));
         
         // Confirm Password
-        JLabel lblConfirm = new JLabel("Xác nhận mật khẩu");
-        lblConfirm.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblConfirm.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JPasswordField txtConfirmPassword = new JPasswordField();
-        txtConfirmPassword.setMaximumSize(new Dimension(400, 45));
-        txtConfirmPassword.setFont(new Font("Arial", Font.PLAIN, 16));
-        txtConfirmPassword.setBackground(LIGHT_BROWN);
-        txtConfirmPassword.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(DARKER_BROWN, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        
-        panel.add(lblConfirm);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(txtConfirmPassword);
-        panel.add(Box.createVerticalStrut(40));
+        JPasswordField txtConfirmPassword = new JPasswordField(20);
+        JPanel confirmPanel = createInputPanel("🔑", txtConfirmPassword, "Xác nhận mật khẩu", true);
+        panel.add(confirmPanel);
+        panel.add(Box.createVerticalStrut(25));
         
         // Button Đăng Ký
-        JButton btnRegister = new JButton("ĐĂNG KÝ");
-        btnRegister.setMaximumSize(new Dimension(400, 50));
-        btnRegister.setFont(new Font("Arial", Font.BOLD, 16));
-        btnRegister.setBackground(DARKER_BROWN);
-        btnRegister.setForeground(WHITE);
-        btnRegister.setFocusPainted(false);
-        btnRegister.setBorderPainted(false);
-        btnRegister.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegister.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnRegister.addActionListener(e -> controller.handleRegister(
-            txtRegUsername.getText(),
-            new String(txtRegPassword.getPassword()),
-            new String(txtConfirmPassword.getPassword())
-        ));
-        
+        JButton btnRegister = createStyledButton("ĐĂNG KÝ");
+        btnRegister.addActionListener(e -> {
+            String username = txtRegUsername.getText();
+            String password = new String(txtRegPassword.getPassword());
+            String confirmPassword = new String(txtConfirmPassword.getPassword());
+            
+            // Xóa placeholder nếu chưa nhập
+            if (username.equals("Tên đăng nhập")) username = "";
+            if (password.equals("Mật khẩu")) password = "";
+            if (confirmPassword.equals("Xác nhận mật khẩu")) confirmPassword = "";
+            
+            controller.handleRegister(username, password, confirmPassword);
+        });
         panel.add(btnRegister);
         
         return panel;
     }
     
+    private JPanel createInputPanel(String icon, JTextField textField, String placeholder, boolean isPassword) {
+        JPanel panel = new JPanel(new BorderLayout(10, 0));
+        panel.setMaximumSize(new Dimension(450, 50));
+        panel.setBackground(LIGHT_BROWN);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(ACCENT_COLOR, 2),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        
+        JLabel iconLabel = new JLabel(icon);
+        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+        
+        textField.setFont(new Font("Arial", Font.PLAIN, 15));
+        textField.setBackground(LIGHT_BROWN);
+        textField.setBorder(null);
+        textField.setText(placeholder);
+        textField.setForeground(Color.GRAY);
+        
+        // Placeholder effect
+        textField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (textField.getText().equals(placeholder)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
+                    if (isPassword) {
+                        ((JPasswordField) textField).setEchoChar('●');
+                    }
+                }
+            }
+            
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (textField.getText().isEmpty()) {
+                    textField.setText(placeholder);
+                    textField.setForeground(Color.GRAY);
+                    if (isPassword) {
+                        ((JPasswordField) textField).setEchoChar((char) 0);
+                    }
+                }
+            }
+        });
+        
+        // Khởi tạo password field không hiện ký tự khi là placeholder
+        if (isPassword) {
+            ((JPasswordField) textField).setEchoChar((char) 0);
+        }
+        
+        panel.add(iconLabel, BorderLayout.WEST);
+        panel.add(textField, BorderLayout.CENTER);
+        
+        return panel;
+    }
+    
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setMaximumSize(new Dimension(450, 55));
+        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setBackground(DARKER_BROWN);
+        button.setForeground(WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        // Hover effect
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(BROWN_HEADER);
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(DARKER_BROWN);
+            }
+        });
+        
+        return button;
+    }
+    
+    public void showMessage(String message, String title, int messageType) {
+        JOptionPane.showMessageDialog(this, message, title, messageType);
+    }
+    
     public void showMessage(String message) {
-        JOptionPane.showMessageDialog(this, message);
+        showMessage(message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public void switchToLoginTab() {
+        tabbedPane.setSelectedIndex(0);
+        // Clear các field trong tab đăng nhập
+        txtUsername.setText("Tên đăng nhập");
+        txtUsername.setForeground(Color.GRAY);
+        txtPassword.setText("Mật khẩu");
+        txtPassword.setForeground(Color.GRAY);
+        ((JPasswordField) txtPassword).setEchoChar((char) 0);
+    }
+    
+    public void showLoadingMessage(String message) {
+        loadingLabel.setText(message);
+        loadingLabel.setVisible(true);
+    }
+    
+    public void hideLoadingMessage() {
+        loadingLabel.setVisible(false);
     }
 }

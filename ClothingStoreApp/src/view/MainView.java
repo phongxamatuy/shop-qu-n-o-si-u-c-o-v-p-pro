@@ -2,6 +2,8 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import controller.OrderController;
+import controller.WarehouseController;
 
 public class MainView extends JFrame {
     private static final Color BROWN_HEADER = new Color(139, 90, 60);
@@ -9,7 +11,13 @@ public class MainView extends JFrame {
     private static final Color SIDEBAR_COLOR = new Color(245, 240, 235);
     private static final Color CARD_COLOR = new Color(222, 204, 190);
     
+    private JPanel contentArea; // Panel để thay đổi nội dung
+    private String username;
+    private String role;
+    
     public MainView(String username, String role) {
+        this.username = username;
+        this.role = role;
         initComponents(username, role);
     }
     
@@ -28,12 +36,12 @@ public class MainView extends JFrame {
         // Sidebar
         JPanel sidebarPanel = createSidebar();
         
-        // Content (Dashboard)
-        JPanel contentPanel = createDashboard();
+        // Content (Dashboard) - lưu reference để có thể thay đổi
+        contentArea = createDashboard();
         
         mainContainer.add(headerPanel, BorderLayout.NORTH);
         mainContainer.add(sidebarPanel, BorderLayout.WEST);
-        mainContainer.add(contentPanel, BorderLayout.CENTER);
+        mainContainer.add(contentArea, BorderLayout.CENTER);
         
         add(mainContainer);
     }
@@ -93,8 +101,16 @@ public class MainView extends JFrame {
         btnLogout.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnLogout.addActionListener(e -> {
-            dispose();
-            new LoginView().setVisible(true);
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Bạn có chắc chắn muốn đăng xuất?",
+                "Xác Nhận",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                dispose();
+                new LoginView().setVisible(true);
+            }
         });
         
         rightPanel.add(lblTime);
@@ -127,7 +143,12 @@ public class MainView extends JFrame {
         };
         
         for (int i = 0; i < menuItems.length; i++) {
+            final int index = i;
             JButton menuBtn = createMenuButton(menuItems[i], i == 0);
+            
+            // Thêm action listener cho từng menu
+            menuBtn.addActionListener(e -> handleMenuClick(index, menuItems[index]));
+            
             sidebar.add(menuBtn);
             sidebar.add(Box.createVerticalStrut(5));
         }
@@ -163,6 +184,75 @@ public class MainView extends JFrame {
         }
         
         return btn;
+    }
+    
+    // Xử lý khi click vào menu
+    private void handleMenuClick(int index, String menuName) {
+        switch (index) {
+            case 0: // Tổng Quan
+                showDashboard();
+                break;
+            case 1: // Quản Lý Sản Phẩm
+                JOptionPane.showMessageDialog(this, 
+                    "Chức năng đang phát triển", 
+                    "Thông báo", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case 2: // Quản Lý Kho (Warehouse)
+                openWarehouseManagement();
+                break;
+            case 3: // Bán Hàng (Order)
+                openOrderManagement();
+                break;
+            case 4: // Hóa Đơn
+                JOptionPane.showMessageDialog(this, 
+                    "Chức năng đang phát triển", 
+                    "Thông báo", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case 5: // Khách Hàng
+                JOptionPane.showMessageDialog(this, 
+                    "Chức năng đang phát triển", 
+                    "Thông báo", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case 6: // Nhân Viên
+                JOptionPane.showMessageDialog(this, 
+                    "Chức năng đang phát triển", 
+                    "Thông báo", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case 7: // Thống Kê
+                JOptionPane.showMessageDialog(this, 
+                    "Chức năng đang phát triển", 
+                    "Thông báo", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                break;
+        }
+    }
+    
+    // Hiển thị lại Dashboard
+    private void showDashboard() {
+        contentArea.removeAll();
+        JPanel dashboard = createDashboard();
+        contentArea.setLayout(new BorderLayout());
+        contentArea.add(dashboard, BorderLayout.CENTER);
+        contentArea.revalidate();
+        contentArea.repaint();
+    }
+    
+    // Mở màn hình Quản Lý Đơn Hàng
+    private void openOrderManagement() {
+        OrderManagementView orderView = new OrderManagementView();
+        OrderController orderController = new OrderController(orderView);
+        orderView.setVisible(true);
+    }
+    
+    // Mở màn hình Quản Lý Kho
+    private void openWarehouseManagement() {
+        WarehouseManagementView warehouseView = new WarehouseManagementView();
+        WarehouseController warehouseController = new WarehouseController(warehouseView);
+        warehouseView.setVisible(true);
     }
     
     private JPanel createDashboard() {
