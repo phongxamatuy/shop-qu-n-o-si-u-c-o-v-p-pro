@@ -475,16 +475,16 @@ public class WarehouseController {
     }
     
     // Load dữ liệu mẫu
+    // Load dữ liệu mẫu
     private void loadSampleData() {
-        warehouseList.add(new Warehouse("SP001", "Laptop Dell XPS 13", "Điện tử", 15, 10, "A-01-01", "Kho Chính"));
-        warehouseList.add(new Warehouse("SP002", "iPhone 15 Pro", "Điện tử", 8, 10, "A-01-02", "Kho Chính"));
-        warehouseList.add(new Warehouse("SP003", "Samsung Galaxy S24", "Điện tử", 25, 15, "A-02-01", "Kho Chính"));
-        warehouseList.add(new Warehouse("SP004", "Macbook Pro M3", "Điện tử", 5, 8, "A-02-02", "Kho Phụ 1"));
-        warehouseList.add(new Warehouse("SP005", "iPad Air", "Điện tử", 0, 10, "B-01-01", "Kho Phụ 2"));
-        warehouseList.add(new Warehouse("SP006", "AirPods Pro", "Phụ kiện", 50, 20, "B-01-02", "Kho Chính"));
-        warehouseList.add(new Warehouse("SP007", "Magic Mouse", "Phụ kiện", 12, 15, "B-02-01", "Kho Miền Nam"));
-        warehouseList.add(new Warehouse("SP008", "USB-C Cable", "Phụ kiện", 100, 50, "C-01-01", "Kho Miền Bắc"));
-        
+        warehouseList.add(new Warehouse("SP001", "Áo khoác Gió", "Áo", 15, 10, "A-01-01", "Kho Chính"));
+        warehouseList.add(new Warehouse("SP002", "Áo phông mixigaming", "Áo", 8, 10, "A-01-02", "Kho Chính"));
+        warehouseList.add(new Warehouse("SP003", "Quần jean ", "Quần", 25, 15, "A-02-01", "Kho Chính"));
+        warehouseList.add(new Warehouse("SP004", "Niketech", "Bộ", 5, 8, "A-02-02", "Kho Phụ 1"));
+        warehouseList.add(new Warehouse("SP005", "Quần âu ", "Quần", 0, 10, "B-01-01", "Kho Phụ 2"));
+        warehouseList.add(new Warehouse("SP006", "Áo sơ mi", "Áo", 50, 20, "B-01-02", "Kho Chính"));
+        warehouseList.add(new Warehouse("SP007", "Váy chân ngắn", "Váy", 12, 15, "B-02-01", "Kho Miền Nam"));
+        warehouseList.add(new Warehouse("SP008", "Quần bò xuông", "Quần", 100, 50, "C-01-01", "Kho Miền Bắc"));
         refreshTable();
         updateStatistics();
     }
