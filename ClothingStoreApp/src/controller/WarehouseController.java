@@ -2,6 +2,7 @@ package controller;
 
 import model.Warehouse;
 import view.WarehouseManagementView;
+import database.WarehouseDatabase;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -13,16 +14,18 @@ import java.util.stream.Collectors;
 public class WarehouseController {
     private WarehouseManagementView view;
     private List<Warehouse> warehouseList;
+    private WarehouseDatabase warehouseDatabase;
     
     public WarehouseController(WarehouseManagementView view) {
         this.view = view;
+        this.warehouseDatabase = new WarehouseDatabase();
         this.warehouseList = new ArrayList<>();
         
         // Khởi tạo event listeners
         initController();
         
-        // Load dữ liệu mẫu
-        loadSampleData();
+        // Tải dữ liệu từ file database
+        loadWarehousesFromDatabase();
     }
     
     private void initController() {
@@ -83,6 +86,38 @@ public class WarehouseController {
         });
     }
     
+    // Tải dữ liệu từ database
+    private void loadWarehousesFromDatabase() {
+        // Nếu file không tồn tại, load dữ liệu mẫu
+        if (!warehouseDatabase.fileExists()) {
+            loadSampleData();
+            saveWarehousesToDatabase();
+        } else {
+            // Tải từ file
+            List<Warehouse> loadedWarehouses = warehouseDatabase.loadWarehouses();
+            if (!loadedWarehouses.isEmpty()) {
+                warehouseList = loadedWarehouses;
+            } else {
+                // Nếu file rỗng, load dữ liệu mẫu
+                loadSampleData();
+                saveWarehousesToDatabase();
+            }
+        }
+        
+        // Hiển thị lên bảng
+        refreshTable();
+        updateStatistics();
+    }
+    
+    // Lưu danh sách kho vào database
+    private void saveWarehousesToDatabase() {
+        if (warehouseDatabase.saveWarehouses(warehouseList)) {
+            System.out.println("✓ Dữ liệu kho đã được lưu vào: " + warehouseDatabase.getFilePath());
+        } else {
+            System.err.println("✗ Lỗi lưu dữ liệu kho!");
+        }
+    }
+    
     // Thêm sản phẩm mới
     private void addProduct() {
         try {
@@ -132,6 +167,9 @@ public class WarehouseController {
             
             // Thêm vào danh sách
             warehouseList.add(product);
+            
+            // Lưu vào database
+            saveWarehousesToDatabase();
             
             // Cập nhật bảng và thống kê
             refreshTable();
@@ -218,9 +256,15 @@ public class WarehouseController {
             product.setLocation(location);
             product.setWarehouseName(warehouseName);
             
+            // Lưu vào database
+            saveWarehousesToDatabase();
+            
             // Refresh bảng và thống kê
             refreshTable();
             updateStatistics();
+            
+            // Xóa form
+            clearForm();
             
             JOptionPane.showMessageDialog(view, 
                 "Cập nhật sản phẩm thành công!", 
@@ -263,6 +307,10 @@ public class WarehouseController {
             
             if (product != null) {
                 warehouseList.remove(product);
+                
+                // Lưu vào database
+                saveWarehousesToDatabase();
+                
                 refreshTable();
                 updateStatistics();
                 clearForm();
@@ -309,6 +357,10 @@ public class WarehouseController {
                     }
                     
                     product.importStock(amount);
+                    
+                    // Lưu vào database
+                    saveWarehousesToDatabase();
+                    
                     refreshTable();
                     updateStatistics();
                     
@@ -363,6 +415,10 @@ public class WarehouseController {
                     }
                     
                     if (product.exportStock(amount)) {
+                        
+                        // Lưu vào database
+                        saveWarehousesToDatabase();
+                        
                         refreshTable();
                         updateStatistics();
                         
@@ -475,7 +531,6 @@ public class WarehouseController {
     }
     
     // Load dữ liệu mẫu
-    // Load dữ liệu mẫu
     private void loadSampleData() {
         warehouseList.add(new Warehouse("SP001", "Áo khoác Gió", "Áo", 15, 10, "A-01-01", "Kho Chính"));
         warehouseList.add(new Warehouse("SP002", "Áo phông mixigaming", "Áo", 8, 10, "A-01-02", "Kho Chính"));
@@ -485,8 +540,6 @@ public class WarehouseController {
         warehouseList.add(new Warehouse("SP006", "Áo sơ mi", "Áo", 50, 20, "B-01-02", "Kho Chính"));
         warehouseList.add(new Warehouse("SP007", "Váy chân ngắn", "Váy", 12, 15, "B-02-01", "Kho Miền Nam"));
         warehouseList.add(new Warehouse("SP008", "Quần bò xuông", "Quần", 100, 50, "C-01-01", "Kho Miền Bắc"));
-        refreshTable();
-        updateStatistics();
     }
     
     // Getters

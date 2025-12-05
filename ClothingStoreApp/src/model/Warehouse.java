@@ -1,9 +1,12 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Warehouse {
+public class Warehouse implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String productId;
     private String productName;
     private String category;
@@ -16,7 +19,6 @@ public class Warehouse {
     // Constructor mặc định
     public Warehouse() {
         this.lastUpdated = LocalDateTime.now();
-        this.minStock = 10; // Giá trị mặc định
     }
     
     // Constructor đầy đủ
@@ -73,111 +75,99 @@ public class Warehouse {
     // Setters
     public void setProductId(String productId) {
         this.productId = productId;
+        updateLastUpdated();
     }
     
     public void setProductName(String productName) {
         this.productName = productName;
+        updateLastUpdated();
     }
     
     public void setCategory(String category) {
         this.category = category;
+        updateLastUpdated();
     }
     
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-        this.lastUpdated = LocalDateTime.now();
+        updateLastUpdated();
     }
     
     public void setMinStock(int minStock) {
         this.minStock = minStock;
+        updateLastUpdated();
     }
     
     public void setLocation(String location) {
         this.location = location;
+        updateLastUpdated();
     }
     
     public void setWarehouseName(String warehouseName) {
         this.warehouseName = warehouseName;
+        updateLastUpdated();
     }
     
     public void setLastUpdated(LocalDateTime lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
     
-    // Phương thức nghiệp vụ
+    // Phương thức cập nhật thời gian
+    private void updateLastUpdated() {
+        this.lastUpdated = LocalDateTime.now();
+    }
     
-    // Nhập hàng vào kho
+    // Nhập kho
     public void importStock(int amount) {
         if (amount > 0) {
             this.quantity += amount;
-            this.lastUpdated = LocalDateTime.now();
+            updateLastUpdated();
         }
     }
     
-    // Xuất hàng ra khỏi kho
+    // Xuất kho
     public boolean exportStock(int amount) {
         if (amount > 0 && amount <= this.quantity) {
             this.quantity -= amount;
-            this.lastUpdated = LocalDateTime.now();
+            updateLastUpdated();
             return true;
         }
         return false;
     }
     
-    // Kiểm tra trạng thái kho
-    public String getStockStatus() {
-        if (quantity == 0) {
-            return "Hết hàng";
-        } else if (quantity <= minStock) {
-            return "Sắp hết";
-        } else {
-            return "Còn hàng";
-        }
-    }
-    
-    // Kiểm tra có phải hàng sắp hết không
+    // Kiểm tra hàng sắp hết
     public boolean isLowStock() {
-        return quantity > 0 && quantity <= minStock;
+        return quantity < minStock && quantity > 0;
     }
     
-    // Kiểm tra có hết hàng không
+    // Kiểm tra hàng hết
     public boolean isOutOfStock() {
         return quantity == 0;
     }
     
-    // Kiểm tra có đủ hàng để xuất không
-    public boolean hasEnoughStock(int requestedAmount) {
-        return quantity >= requestedAmount;
-    }
-    
-    // Tính phần trăm còn lại so với mức tối thiểu
-    public double getStockPercentage() {
-        if (minStock == 0) return 100.0;
-        return (double) quantity / minStock * 100.0;
-    }
-    
-    // Validate dữ liệu
+    // Phương thức validate
     public boolean isValid() {
         return productId != null && !productId.trim().isEmpty()
                 && productName != null && !productName.trim().isEmpty()
                 && category != null && !category.trim().isEmpty()
-                && quantity >= 0
-                && minStock >= 0
                 && location != null && !location.trim().isEmpty()
-                && warehouseName != null && !warehouseName.trim().isEmpty();
+                && warehouseName != null && !warehouseName.trim().isEmpty()
+                && quantity >= 0
+                && minStock >= 0;
     }
     
     // Chuyển đổi sang mảng Object cho JTable
     public Object[] toTableRow() {
+        String status = isOutOfStock() ? "Hết hàng" : (isLowStock() ? "Sắp hết" : "Bình thường");
         return new Object[] {
             productId,
             productName,
             category,
             quantity,
             minStock,
+            status,
             location,
-            warehouseName,
-            getStockStatus()
+            warehouseName
         };
     }
     
@@ -191,7 +181,6 @@ public class Warehouse {
                 ", minStock=" + minStock +
                 ", location='" + location + '\'' +
                 ", warehouseName='" + warehouseName + '\'' +
-                ", status='" + getStockStatus() + '\'' +
                 ", lastUpdated=" + getFormattedLastUpdated() +
                 '}';
     }

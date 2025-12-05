@@ -2,29 +2,30 @@ package controller;
 
 import model.Order;
 import view.OrderManagementView;
+import database.OrderDatabase;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderController {
     private OrderManagementView view;
-    private List<Order> orderList;    
+    private List<Order> orderList;
+    private OrderDatabase orderDatabase;
+    
     public OrderController(OrderManagementView view) {
         this.view = view;
+        this.orderDatabase = new OrderDatabase();
         this.orderList = new ArrayList<>();
         
         // Khởi tạo event listeners
         initController();
         
-        // Load dữ liệu mẫu
-        loadSampleData();
+        // Tải dữ liệu từ file database
+        loadOrdersFromDatabase();
     }
     
     private void initController() {
@@ -69,6 +70,37 @@ public class OrderController {
         });
     }
     
+    // Tải dữ liệu từ database
+    private void loadOrdersFromDatabase() {
+        // Nếu file không tồn tại, load dữ liệu mẫu
+        if (!orderDatabase.fileExists()) {
+            loadSampleData();
+            saveOrdersToDatabase();
+        } else {
+            // Tải từ file
+            List<Order> loadedOrders = orderDatabase.loadOrders();
+            if (!loadedOrders.isEmpty()) {
+                orderList = loadedOrders;
+            } else {
+                // Nếu file rỗng, load dữ liệu mẫu
+                loadSampleData();
+                saveOrdersToDatabase();
+            }
+        }
+        
+        // Hiển thị lên bảng
+        refreshTable();
+    }
+    
+    // Lưu danh sách đơn hàng vào database
+    private void saveOrdersToDatabase() {
+        if (orderDatabase.saveOrders(orderList)) {
+            System.out.println("✓ Dữ liệu đã được lưu vào: " + orderDatabase.getFilePath());
+        } else {
+            System.err.println("✗ Lỗi lưu dữ liệu!");
+        }
+    }
+    
     // Thêm đơn hàng mới
     private void addOrder() {
         try {
@@ -99,7 +131,10 @@ public class OrderController {
                 return;
             }
             
-            // Parse số
+            // Parse số - loại bỏ dấu phẩy nếu có
+            quantityStr = quantityStr.replace(",", "");
+            priceStr = priceStr.replace(",", "");
+            
             int quantity = Integer.parseInt(quantityStr);
             double price = Double.parseDouble(priceStr);
             
@@ -114,8 +149,20 @@ public class OrderController {
             // Tạo đơn hàng mới
             Order order = new Order(orderId, customerName, productName, quantity, price, status);
             
+            // Kiểm tra hợp lệ
+            if (!order.isValid()) {
+                JOptionPane.showMessageDialog(view, 
+                    "Dữ liệu đơn hàng không hợp lệ!", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
             // Thêm vào danh sách
             orderList.add(order);
+            
+            // Lưu vào database
+            saveOrdersToDatabase();
             
             // Cập nhật bảng
             refreshTable();
@@ -130,7 +177,7 @@ public class OrderController {
             
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(view, 
-                "Số lượng và giá phải là số hợp lệ!", 
+                "Số lượng và giá phải là số hợp lệ!\n" + e.getMessage(), 
                 "Lỗi", 
                 JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
@@ -181,6 +228,10 @@ public class OrderController {
                 return;
             }
             
+            // Parse số - loại bỏ dấu phẩy nếu có
+            quantityStr = quantityStr.replace(",", "");
+            priceStr = priceStr.replace(",", "");
+            
             int quantity = Integer.parseInt(quantityStr);
             double price = Double.parseDouble(priceStr);
             
@@ -199,8 +250,14 @@ public class OrderController {
             order.setPrice(price);
             order.setStatus(status);
             
+            // Lưu vào database
+            saveOrdersToDatabase();
+            
             // Refresh bảng
             refreshTable();
+            
+            // Xóa form
+            clearForm();
             
             JOptionPane.showMessageDialog(view, 
                 "Cập nhật đơn hàng thành công!", 
@@ -209,7 +266,7 @@ public class OrderController {
             
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(view, 
-                "Số lượng và giá phải là số hợp lệ!", 
+                "Số lượng và giá phải là số hợp lệ!\n" + e.getMessage(), 
                 "Lỗi", 
                 JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
@@ -243,6 +300,10 @@ public class OrderController {
             
             if (order != null) {
                 orderList.remove(order);
+                
+                // Lưu vào database
+                saveOrdersToDatabase();
+                
                 refreshTable();
                 clearForm();
                 
@@ -324,13 +385,11 @@ public class OrderController {
     
     // Load dữ liệu mẫu
     private void loadSampleData() {
-        orderList.add(new Order("ORD001", "Nguyễn Văn A", "Áo Niketech", 1, 25000000, "Chờ xử lý"));
-        orderList.add(new Order("ORD002", "Trần Thị B", "Quần jean ống rộng", 2, 29000000, "Đang giao"));
-        orderList.add(new Order("ORD003", "Lê Văn C", "Áo khoác gió", 1, 22000000, "Đã giao"));
-        orderList.add(new Order("ORD004", "Phạm Thị D", "Váy xếp ly", 1, 45000000, "Chờ xử lý"));
-        orderList.add(new Order("ORD005", "Hoàng Văn E", "Áo phông", 3, 15000000, "Đã hủy"));
-        
-        refreshTable();
+        orderList.add(new Order("ORD001", "Nguyễn Văn A", "Áo Niketech", 1, 250000, "Chờ xử lý"));
+        orderList.add(new Order("ORD002", "Trần Thị B", "Quần jean ống rộng", 2, 290000, "Đang giao"));
+        orderList.add(new Order("ORD003", "Lê Văn C", "Áo khoác gió", 1, 220000, "Đã giao"));
+        orderList.add(new Order("ORD004", "Phạm Thị D", "Váy xếp ly", 1, 450000, "Chờ xử lý"));
+        orderList.add(new Order("ORD005", "Hoàng Văn E", "Áo phông", 3, 150000, "Đã hủy"));
     }
     
     // Getters

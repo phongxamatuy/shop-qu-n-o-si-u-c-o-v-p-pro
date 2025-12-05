@@ -1,9 +1,12 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Order {
+public class Order implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String orderId;
     private String customerName;
     private String productName;
@@ -17,6 +20,7 @@ public class Order {
     public Order() {
         this.orderDate = LocalDateTime.now();
         this.status = "Chờ xử lý";
+        this.totalAmount = 0;
     }
     
     // Constructor đầy đủ
@@ -157,7 +161,7 @@ public class Order {
             customerName,
             productName,
             quantity,
-            price,
+            String.format("%.2f", price),
             String.format("%.2f", totalAmount),
             status
         };
