@@ -6,14 +6,16 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderController {
     private OrderManagementView view;
-    private List<Order> orderList;
-    
+    private List<Order> orderList;    
     public OrderController(OrderManagementView view) {
         this.view = view;
         this.orderList = new ArrayList<>();
@@ -322,11 +324,11 @@ public class OrderController {
     
     // Load dữ liệu mẫu
     private void loadSampleData() {
-        orderList.add(new Order("ORD001", "Nguyễn Văn A", "Laptop Dell XPS 13", 1, 25000000, "Chờ xử lý"));
-        orderList.add(new Order("ORD002", "Trần Thị B", "iPhone 15 Pro", 2, 29000000, "Đang giao"));
-        orderList.add(new Order("ORD003", "Lê Văn C", "Samsung Galaxy S24", 1, 22000000, "Đã giao"));
-        orderList.add(new Order("ORD004", "Phạm Thị D", "Macbook Pro M3", 1, 45000000, "Chờ xử lý"));
-        orderList.add(new Order("ORD005", "Hoàng Văn E", "iPad Air", 3, 15000000, "Đã hủy"));
+        orderList.add(new Order("ORD001", "Nguyễn Văn A", "Áo Niketech", 1, 25000000, "Chờ xử lý"));
+        orderList.add(new Order("ORD002", "Trần Thị B", "Quần jean ống rộng", 2, 29000000, "Đang giao"));
+        orderList.add(new Order("ORD003", "Lê Văn C", "Áo khoác gió", 1, 22000000, "Đã giao"));
+        orderList.add(new Order("ORD004", "Phạm Thị D", "Váy xếp ly", 1, 45000000, "Chờ xử lý"));
+        orderList.add(new Order("ORD005", "Hoàng Văn E", "Áo phông", 3, 15000000, "Đã hủy"));
         
         refreshTable();
     }

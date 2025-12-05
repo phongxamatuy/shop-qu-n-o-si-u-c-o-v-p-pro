@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import controller.OrderController;
 import controller.WarehouseController;
+import controller.ProductController;
 
 public class MainView extends JFrame {
     private static final Color BROWN_HEADER = new Color(139, 90, 60);
@@ -135,10 +136,9 @@ public class MainView extends JFrame {
             "📊 Tổng Quan",
             "👕 Quản Lý Sản Phẩm",
             "📦 Quản Lý Kho",
-            "🛒 Bán Hàng",
-            "📄 Hóa Đơn",
-            "👥 Khách Hàng",
-            "👤 Nhân Viên",
+            "🛒 Quản lý Đơn Hàng",
+            "👥 Quản lý Khách Hàng",
+            "👤 Quản lý Nhân Viên",
             "📈 Thống Kê"
         };
         
@@ -193,10 +193,7 @@ public class MainView extends JFrame {
                 showDashboard();
                 break;
             case 1: // Quản Lý Sản Phẩm
-                JOptionPane.showMessageDialog(this, 
-                    "Chức năng đang phát triển", 
-                    "Thông báo", 
-                    JOptionPane.INFORMATION_MESSAGE);
+                openProductManagement();
                 break;
             case 2: // Quản Lý Kho (Warehouse)
                 openWarehouseManagement();
@@ -204,25 +201,20 @@ public class MainView extends JFrame {
             case 3: // Bán Hàng (Order)
                 openOrderManagement();
                 break;
-            case 4: // Hóa Đơn
+            
+            case 4: // Khách Hàng
                 JOptionPane.showMessageDialog(this, 
                     "Chức năng đang phát triển", 
                     "Thông báo", 
                     JOptionPane.INFORMATION_MESSAGE);
                 break;
-            case 5: // Khách Hàng
+            case 5: // Nhân Viên
                 JOptionPane.showMessageDialog(this, 
                     "Chức năng đang phát triển", 
                     "Thông báo", 
                     JOptionPane.INFORMATION_MESSAGE);
                 break;
-            case 6: // Nhân Viên
-                JOptionPane.showMessageDialog(this, 
-                    "Chức năng đang phát triển", 
-                    "Thông báo", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                break;
-            case 7: // Thống Kê
+            case 6: // Thống Kê
                 JOptionPane.showMessageDialog(this, 
                     "Chức năng đang phát triển", 
                     "Thông báo", 
@@ -239,6 +231,13 @@ public class MainView extends JFrame {
         contentArea.add(dashboard, BorderLayout.CENTER);
         contentArea.revalidate();
         contentArea.repaint();
+    }
+    
+    // Mở màn hình Quản Lý Sản Phẩm
+    private void openProductManagement() {
+        ProductManagementView productView = new ProductManagementView();
+        ProductController productController = new ProductController();
+        productView.setVisible(true);
     }
     
     // Mở màn hình Quản Lý Đơn Hàng

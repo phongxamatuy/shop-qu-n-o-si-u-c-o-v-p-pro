@@ -168,30 +168,6 @@ public class LoginView extends JFrame {
         panel.add(Box.createVerticalStrut(20));
         
         // Thông tin tài khoản mặc định
-        JPanel infoPanel = new JPanel();
-        infoPanel.setBackground(LIGHT_BROWN);
-        infoPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(ACCENT_COLOR, 1),
-            BorderFactory.createEmptyBorder(12, 15, 12, 15)
-        ));
-        infoPanel.setMaximumSize(new Dimension(450, 70));
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        
-        JLabel lblInfo = new JLabel("💡 Tài khoản mặc định");
-        lblInfo.setFont(new Font("Arial", Font.BOLD, 12));
-        lblInfo.setForeground(DARKER_BROWN);
-        lblInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JLabel lblAccount = new JLabel("admin / admin");
-        lblAccount.setFont(new Font("Arial", Font.PLAIN, 13));
-        lblAccount.setForeground(BROWN_HEADER);
-        lblAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        infoPanel.add(lblInfo);
-        infoPanel.add(Box.createVerticalStrut(5));
-        infoPanel.add(lblAccount);
-        
-        panel.add(infoPanel);
         
         return panel;
     }
