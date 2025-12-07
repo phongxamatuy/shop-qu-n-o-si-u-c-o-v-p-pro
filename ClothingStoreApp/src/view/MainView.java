@@ -5,14 +5,17 @@ import java.awt.*;
 import controller.OrderController;
 import controller.WarehouseController;
 import controller.ProductController;
+import controller.CustomerController;
+import controller.EmployeeController;
 
 public class MainView extends JFrame {
+    // Màu sắc chính
     private static final Color BROWN_HEADER = new Color(139, 90, 60);
     private static final Color LIGHT_BROWN = new Color(222, 204, 190);
     private static final Color SIDEBAR_COLOR = new Color(245, 240, 235);
     private static final Color CARD_COLOR = new Color(222, 204, 190);
     
-    private JPanel contentArea; // Panel để thay đổi nội dung
+    private JPanel contentArea;
     private String username;
     private String role;
     
@@ -28,18 +31,14 @@ public class MainView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
-        // Main container
         JPanel mainContainer = new JPanel(new BorderLayout());
         
-        // Header
+        // Tạo các panel chính
         JPanel headerPanel = createHeader(username);
-        
-        // Sidebar
         JPanel sidebarPanel = createSidebar();
-        
-        // Content (Dashboard) - lưu reference để có thể thay đổi
         contentArea = createDashboard();
         
+        // Thêm các panel vào container
         mainContainer.add(headerPanel, BorderLayout.NORTH);
         mainContainer.add(sidebarPanel, BorderLayout.WEST);
         mainContainer.add(contentArea, BorderLayout.CENTER);
@@ -47,13 +46,16 @@ public class MainView extends JFrame {
         add(mainContainer);
     }
     
+    /**
+     * Tạo header với logo, title và user info
+     */
     private JPanel createHeader(String username) {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(BROWN_HEADER);
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         header.setPreferredSize(new Dimension(0, 80));
         
-        // Logo và Title
+        // Panel trái: Logo + Title
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         leftPanel.setBackground(BROWN_HEADER);
         
@@ -77,16 +79,14 @@ public class MainView extends JFrame {
         leftPanel.add(lblLogo);
         leftPanel.add(titlePanel);
         
-        // User info và nút Đăng Xuất
+        // Panel phải: Time + User info + Logout
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         rightPanel.setBackground(BROWN_HEADER);
         
-        // Thời gian
         JLabel lblTime = new JLabel("22:36:22 - 24/11/2025");
         lblTime.setFont(new Font("Arial", Font.PLAIN, 12));
         lblTime.setForeground(Color.WHITE);
         
-        // User icon
         JLabel lblUserIcon = new JLabel("👤");
         lblUserIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 24));
         
@@ -125,6 +125,9 @@ public class MainView extends JFrame {
         return header;
     }
     
+    /**
+     * Tạo sidebar menu
+     */
     private JPanel createSidebar() {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
@@ -133,27 +136,25 @@ public class MainView extends JFrame {
         sidebar.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
         
         String[] menuItems = {
-            "📊 Tổng Quan",
-            "👕 Quản Lý Sản Phẩm",
-            "📦 Quản Lý Kho",
-            "🛒 Quản lý Đơn Hàng",
-            "👥 Quản lý Khách Hàng",
-            "👤 Quản lý Nhân Viên",
-            "📈 Thống Kê"
+            "Tổng Quan",
+            "Quản Lý Sản Phẩm",
+            "Quản Lý Kho",
+            "Quản lý Đơn Hàng",
+            "Quản lý Khách Hàng",
+            "Quản lý Nhân Viên",
+            "Thống Kê"
         };
         
+        // Tạo button menu cho từng item
         for (int i = 0; i < menuItems.length; i++) {
             final int index = i;
             JButton menuBtn = createMenuButton(menuItems[i], i == 0);
-            
-            // Thêm action listener cho từng menu
             menuBtn.addActionListener(e -> handleMenuClick(index, menuItems[index]));
-            
             sidebar.add(menuBtn);
             sidebar.add(Box.createVerticalStrut(5));
         }
         
-        // Phiên bản ở dưới cùng
+        // Version ở cuối
         sidebar.add(Box.createVerticalGlue());
         JLabel lblVersion = new JLabel("Version 1.0.0");
         lblVersion.setFont(new Font("Arial", Font.ITALIC, 10));
@@ -164,6 +165,9 @@ public class MainView extends JFrame {
         return sidebar;
     }
     
+    /**
+     * Tạo button menu với style
+     */
     private JButton createMenuButton(String text, boolean selected) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -186,7 +190,9 @@ public class MainView extends JFrame {
         return btn;
     }
     
-    // Xử lý khi click vào menu
+    /**
+     * Xử lý click menu
+     */
     private void handleMenuClick(int index, String menuName) {
         switch (index) {
             case 0: // Tổng Quan
@@ -195,24 +201,17 @@ public class MainView extends JFrame {
             case 1: // Quản Lý Sản Phẩm
                 openProductManagement();
                 break;
-            case 2: // Quản Lý Kho (Warehouse)
+            case 2: // Quản Lý Kho
                 openWarehouseManagement();
                 break;
-            case 3: // Bán Hàng (Order)
+            case 3: // Quản lý Đơn Hàng
                 openOrderManagement();
                 break;
-            
-            case 4: // Khách Hàng
-                JOptionPane.showMessageDialog(this, 
-                    "Chức năng đang phát triển", 
-                    "Thông báo", 
-                    JOptionPane.INFORMATION_MESSAGE);
+            case 4: // Quản lý Khách Hàng
+                openCustomerManagement();
                 break;
-            case 5: // Nhân Viên
-                JOptionPane.showMessageDialog(this, 
-                    "Chức năng đang phát triển", 
-                    "Thông báo", 
-                    JOptionPane.INFORMATION_MESSAGE);
+            case 5: // Quản lý Nhân Viên
+                openEmployeeManagement();
                 break;
             case 6: // Thống Kê
                 JOptionPane.showMessageDialog(this, 
@@ -223,7 +222,9 @@ public class MainView extends JFrame {
         }
     }
     
-    // Hiển thị lại Dashboard
+    /**
+     * Hiển thị dashboard
+     */
     private void showDashboard() {
         contentArea.removeAll();
         JPanel dashboard = createDashboard();
@@ -233,38 +234,78 @@ public class MainView extends JFrame {
         contentArea.repaint();
     }
     
-    // Mở màn hình Quản Lý Sản Phẩm
+    /**
+     * Mở cửa sổ Quản Lý Sản Phẩm
+     */
     private void openProductManagement() {
         ProductManagementView productView = new ProductManagementView();
         ProductController productController = new ProductController();
         productView.setVisible(true);
     }
     
-    // Mở màn hình Quản Lý Đơn Hàng
+    /**
+     * Mở cửa sổ Quản Lý Đơn Hàng
+     */
     private void openOrderManagement() {
         OrderManagementView orderView = new OrderManagementView();
         OrderController orderController = new OrderController(orderView);
         orderView.setVisible(true);
     }
     
-    // Mở màn hình Quản Lý Kho
+    /**
+     * Mở cửa sổ Quản Lý Kho
+     */
     private void openWarehouseManagement() {
         WarehouseManagementView warehouseView = new WarehouseManagementView();
         WarehouseController warehouseController = new WarehouseController(warehouseView);
         warehouseView.setVisible(true);
     }
     
+    /**
+     * Mở cửa sổ Quản Lý Khách Hàng
+     */
+    private void openCustomerManagement() {
+        try {
+            CustomerManagementView customerView = new CustomerManagementView();
+            customerView.setVisible(true);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi: " + ex.getMessage(), 
+                "Lỗi", 
+                JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Mở cửa sổ Quản Lý Nhân Viên
+     */
+    private void openEmployeeManagement() {
+        try {
+            EmployeeManagementView employeeView = new EmployeeManagementView();
+            EmployeeController employeeController = new EmployeeController(employeeView);
+            employeeView.setVisible(true);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi: " + ex.getMessage(), 
+                "Lỗi", 
+                JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Tạo dashboard với các card thống kê
+     */
     private JPanel createDashboard() {
         JPanel dashboard = new JPanel(new BorderLayout());
         dashboard.setBackground(LIGHT_BROWN);
         dashboard.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         
-        // Title
         JLabel lblTitle = new JLabel("☑ Tổng Quan Hệ Thống");
         lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
         
-        // Cards Grid
         JPanel cardsPanel = new JPanel(new GridLayout(2, 2, 30, 30));
         cardsPanel.setBackground(LIGHT_BROWN);
         
@@ -279,6 +320,9 @@ public class MainView extends JFrame {
         return dashboard;
     }
     
+    /**
+     * Tạo card thống kê
+     */
     private JPanel createStatCard(String icon, String title, String value) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(CARD_COLOR);

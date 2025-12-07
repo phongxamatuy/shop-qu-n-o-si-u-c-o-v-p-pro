@@ -17,7 +17,7 @@ public class WarehouseManagementView extends JFrame {
     public WarehouseManagementView() {
         setTitle("Quản Lý Kho Hàng");
         setSize(1100, 650);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         initComponents();
     }

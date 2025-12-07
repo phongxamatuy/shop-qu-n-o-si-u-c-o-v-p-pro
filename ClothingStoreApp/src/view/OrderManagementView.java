@@ -16,7 +16,7 @@ public class OrderManagementView extends JFrame {
     public OrderManagementView() {
         setTitle("Quản Lý Đơn Hàng");
         setSize(1000, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         initComponents();
     }
