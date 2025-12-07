@@ -84,22 +84,22 @@ public class LoginView extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
-        header.setBorder(BorderFactory.createEmptyBorder(20, 20, 15, 20));
+        header.setBorder(BorderFactory.createEmptyBorder(30, 20, 20, 20));
         
         // Logo
         JLabel lblLogo = new JLabel("👕", SwingConstants.CENTER);
-        lblLogo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 45));
+        lblLogo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 50));
         lblLogo.setForeground(BROWN_HEADER);
         
         JLabel lblTitle = new JLabel("FASHION STORE", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 28));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 32));
         lblTitle.setForeground(BROWN_HEADER);
         
         JLabel lblSubtitle = new JLabel("Hệ Thống Quản Lý Shop Quần Áo", SwingConstants.CENTER);
-        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 12));
+        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 13));
         lblSubtitle.setForeground(DARKER_BROWN);
         
-        JPanel logoTitlePanel = new JPanel(new GridLayout(3, 1, 0, 5));
+        JPanel logoTitlePanel = new JPanel(new GridLayout(3, 1, 0, 8));
         logoTitlePanel.setOpaque(false);
         logoTitlePanel.add(lblLogo);
         logoTitlePanel.add(lblTitle);
@@ -114,41 +114,41 @@ public class LoginView extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
+        panel.setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
         
         // Icon và tiêu đề
         JLabel lblIcon = new JLabel("🔐", SwingConstants.CENTER);
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 35));
+        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 40));
         lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         JLabel lblWelcome = new JLabel("Chào mừng trở lại!");
-        lblWelcome.setFont(new Font("Arial", Font.BOLD, 24));
+        lblWelcome.setFont(new Font("Arial", Font.BOLD, 26));
         lblWelcome.setForeground(BROWN_HEADER);
         lblWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         JLabel lblSubtitle = new JLabel("Đăng nhập để tiếp tục quản lý");
-        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 14));
         lblSubtitle.setForeground(ACCENT_COLOR);
         lblSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         panel.add(lblIcon);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(12));
         panel.add(lblWelcome);
-        panel.add(Box.createVerticalStrut(5));
+        panel.add(Box.createVerticalStrut(6));
         panel.add(lblSubtitle);
-        panel.add(Box.createVerticalStrut(30));
+        panel.add(Box.createVerticalStrut(35));
         
         // Username
         txtUsername = new JTextField(20);
         JPanel usernamePanel = createInputPanel("👤", txtUsername, "Tên đăng nhập", false);
         panel.add(usernamePanel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(18));
         
         // Password
         txtPassword = new JPasswordField(20);
         JPanel passwordPanel = createInputPanel("🔒", txtPassword, "Mật khẩu", true);
         panel.add(passwordPanel);
-        panel.add(Box.createVerticalStrut(25));
+        panel.add(Box.createVerticalStrut(30));
         
         // Button Đăng Nhập
         btnLogin = createStyledButton("ĐĂNG NHẬP");
@@ -160,21 +160,6 @@ public class LoginView extends JFrame {
             controller.handleLogin(username, password);
         });
         panel.add(btnLogin);
-        panel.add(Box.createVerticalStrut(20));
-        
-        // Divider
-        JSeparator separator = new JSeparator();
-        separator.setMaximumSize(new Dimension(450, 1));
-        separator.setForeground(LIGHT_BROWN);
-        panel.add(separator);
-        panel.add(Box.createVerticalStrut(20));
-        
-        // Ghi chú tài khoản mẫu
-        JLabel lblNote = new JLabel("Tài khoản mẫu: admin / 123456");
-        lblNote.setFont(new Font("Arial", Font.ITALIC, 11));
-        lblNote.setForeground(Color.GRAY);
-        lblNote.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(lblNote);
         
         return panel;
     }
@@ -183,47 +168,47 @@ public class LoginView extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
+        panel.setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
         
         // Icon và tiêu đề
         JLabel lblIcon = new JLabel("📝", SwingConstants.CENTER);
-        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 35));
+        lblIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 40));
         lblIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         JLabel lblTitle = new JLabel("Tạo tài khoản mới");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 26));
         lblTitle.setForeground(BROWN_HEADER);
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         JLabel lblSubtitle = new JLabel("Đăng ký để bắt đầu sử dụng");
-        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 14));
         lblSubtitle.setForeground(ACCENT_COLOR);
         lblSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         panel.add(lblIcon);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(12));
         panel.add(lblTitle);
-        panel.add(Box.createVerticalStrut(5));
+        panel.add(Box.createVerticalStrut(6));
         panel.add(lblSubtitle);
-        panel.add(Box.createVerticalStrut(30));
+        panel.add(Box.createVerticalStrut(35));
         
         // Username
         JTextField txtRegUsername = new JTextField(20);
         JPanel usernamePanel = createInputPanel("👤", txtRegUsername, "Tên đăng nhập", false);
         panel.add(usernamePanel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(18));
         
         // Password
         JPasswordField txtRegPassword = new JPasswordField(20);
         JPanel passwordPanel = createInputPanel("🔒", txtRegPassword, "Mật khẩu", true);
         panel.add(passwordPanel);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(18));
         
         // Confirm Password
         JPasswordField txtConfirmPassword = new JPasswordField(20);
         JPanel confirmPanel = createInputPanel("🔑", txtConfirmPassword, "Xác nhận mật khẩu", true);
         panel.add(confirmPanel);
-        panel.add(Box.createVerticalStrut(25));
+        panel.add(Box.createVerticalStrut(30));
         
         // Button Đăng Ký
         JButton btnRegister = createStyledButton("ĐĂNG KÝ");
@@ -240,16 +225,16 @@ public class LoginView extends JFrame {
     }
     
     private JPanel createInputPanel(String icon, JTextField textField, String placeholder, boolean isPassword) {
-        JPanel panel = new JPanel(new BorderLayout(10, 0));
-        panel.setMaximumSize(new Dimension(450, 50));
+        JPanel panel = new JPanel(new BorderLayout(12, 0));
+        panel.setMaximumSize(new Dimension(450, 55));
         panel.setBackground(LIGHT_BROWN);
         panel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(ACCENT_COLOR, 2),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+            BorderFactory.createEmptyBorder(12, 18, 12, 18)
         ));
         
         JLabel iconLabel = new JLabel(icon);
-        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 22));
         
         textField.setFont(new Font("Arial", Font.PLAIN, 15));
         textField.setBackground(LIGHT_BROWN);
@@ -295,7 +280,7 @@ public class LoginView extends JFrame {
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setMaximumSize(new Dimension(450, 55));
-        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setFont(new Font("Arial", Font.BOLD, 17));
         button.setBackground(DARKER_BROWN);
         button.setForeground(WHITE);
         button.setFocusPainted(false);

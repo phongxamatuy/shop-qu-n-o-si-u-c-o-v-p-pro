@@ -19,9 +19,15 @@ public class MainView extends JFrame {
     private static final Color SIDEBAR_COLOR = new Color(245, 240, 235);
     private static final Color CARD_COLOR = new Color(222, 204, 190);
     
+    // Màu sắc cho menu buttons - tông màu nâu nhất quán
+    private static final Color MENU_BUTTON_COLOR = new Color(180, 140, 110);
+    private static final Color MENU_BUTTON_HOVER = new Color(160, 120, 90);
+    private static final Color MENU_BUTTON_SELECTED = new Color(139, 90, 60);
+    
     private JPanel contentArea;
     private String username;
     private String role;
+    private JButton selectedButton = null;
     
     public MainView(String username, String role) {
         this.username = username;
@@ -137,7 +143,7 @@ public class MainView extends JFrame {
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBackground(SIDEBAR_COLOR);
         sidebar.setPreferredSize(new Dimension(280, 0));
-        sidebar.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        sidebar.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
         
         String[] menuItems = {
             "Tổng Quan",
@@ -145,17 +151,26 @@ public class MainView extends JFrame {
             "Quản Lý Kho",
             "Quản lý Đơn Hàng",
             "Quản lý Khách Hàng",
-            "Quản lý Nhân Viên",
-            "Thống Kê"
+            "Quản lý Nhân Viên"
         };
         
         // Tạo button menu cho từng item
         for (int i = 0; i < menuItems.length; i++) {
             final int index = i;
             JButton menuBtn = createMenuButton(menuItems[i], i == 0);
-            menuBtn.addActionListener(e -> handleMenuClick(index, menuItems[index]));
+            menuBtn.addActionListener(e -> {
+                handleMenuClick(index, menuItems[index]);
+                updateSelectedButton(menuBtn);
+            });
             sidebar.add(menuBtn);
-            sidebar.add(Box.createVerticalStrut(5));
+            if (i < menuItems.length - 1) {
+                sidebar.add(Box.createVerticalStrut(15));
+            }
+            
+            // Đặt button đầu tiên là selected
+            if (i == 0) {
+                selectedButton = menuBtn;
+            }
         }
         
         // Version ở cuối
@@ -170,26 +185,59 @@ public class MainView extends JFrame {
     }
     
     /**
-     * Tạo button menu với style
+     * Cập nhật button được chọn
+     */
+    private void updateSelectedButton(JButton newSelected) {
+        // Reset button cũ về trạng thái bình thường
+        if (selectedButton != null) {
+            selectedButton.setBackground(MENU_BUTTON_COLOR);
+            selectedButton.setForeground(Color.WHITE);
+        }
+        
+        // Đặt button mới thành selected
+        selectedButton = newSelected;
+        selectedButton.setBackground(MENU_BUTTON_SELECTED);
+        selectedButton.setForeground(Color.WHITE);
+    }
+    
+    /**
+     * Tạo button menu với style và màu sắc nhất quán
      */
     private JButton createMenuButton(String text, boolean selected) {
         JButton btn = new JButton(text);
-        btn.setFont(new Font("Arial", Font.PLAIN, 14));
-        btn.setMaximumSize(new Dimension(280, 50));
+        btn.setFont(new Font("Arial", Font.BOLD, 15));
+        btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+        btn.setPreferredSize(new Dimension(260, 70));
         btn.setAlignmentX(Component.LEFT_ALIGNMENT);
         btn.setHorizontalAlignment(SwingConstants.LEFT);
-        btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        btn.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
         btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         if (selected) {
-            btn.setBackground(Color.WHITE);
-            btn.setForeground(BROWN_HEADER);
+            btn.setBackground(MENU_BUTTON_SELECTED);
+            btn.setForeground(Color.WHITE);
         } else {
-            btn.setBackground(SIDEBAR_COLOR);
-            btn.setForeground(Color.BLACK);
-            btn.setBorderPainted(false);
+            btn.setBackground(MENU_BUTTON_COLOR);
+            btn.setForeground(Color.WHITE);
         }
+        
+        // Hover effect
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (btn != selectedButton) {
+                    btn.setBackground(MENU_BUTTON_HOVER);
+                }
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                if (btn != selectedButton) {
+                    btn.setBackground(MENU_BUTTON_COLOR);
+                }
+            }
+        });
         
         return btn;
     }
@@ -216,12 +264,6 @@ public class MainView extends JFrame {
                 break;
             case 5: // Quản lý Nhân Viên
                 openEmployeeManagement();
-                break;
-            case 6: // Thống Kê
-                JOptionPane.showMessageDialog(this, 
-                    "Chức năng đang phát triển", 
-                    "Thông báo", 
-                    JOptionPane.INFORMATION_MESSAGE);
                 break;
         }
     }
@@ -305,7 +347,7 @@ public class MainView extends JFrame {
         dashboard.setBackground(LIGHT_BROWN);
         dashboard.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         
-        JLabel lblTitle = new JLabel(" Tổng Quan Hệ Thống");
+        JLabel lblTitle = new JLabel("☑ Tổng Quan Hệ Thống");
         lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
         
