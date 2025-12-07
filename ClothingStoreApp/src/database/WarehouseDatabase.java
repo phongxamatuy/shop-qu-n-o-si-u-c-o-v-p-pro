@@ -5,20 +5,26 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * WarehouseDatabase - Lưu dữ liệu kho riêng theo username
+ * File name format: username_warehouse.dat
+ */
 public class WarehouseDatabase {
-    private static final String FILE_PATH = "warehouse.dat";
+    private String username;
+    private String filePath;
     
-    public WarehouseDatabase() {
-        // Không cần tạo thư mục vì file nằm ngoài project
+    public WarehouseDatabase(String username) {
+        this.username = username;
+        this.filePath = username + "_warehouse.dat";
     }
     
     // Lưu danh sách kho vào file
     public boolean saveWarehouses(List<Warehouse> warehouses) {
-        try (FileOutputStream fos = new FileOutputStream(FILE_PATH);
+        try (FileOutputStream fos = new FileOutputStream(filePath);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(warehouses);
             oos.flush();
-            System.out.println("✓ Lưu kho thành công tại: " + new File(FILE_PATH).getAbsolutePath());
+            System.out.println("✓ Lưu kho (" + username + ") thành công!");
             return true;
         } catch (IOException e) {
             System.err.println("✗ Lỗi khi lưu file: " + e.getMessage());
@@ -30,18 +36,17 @@ public class WarehouseDatabase {
     // Tải danh sách kho từ file
     @SuppressWarnings("unchecked")
     public List<Warehouse> loadWarehouses() {
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
         
-        // Nếu file không tồn tại, trả về danh sách rỗng
         if (!file.exists()) {
             System.out.println("ℹ File không tồn tại. Khởi tạo danh sách mới.");
             return new ArrayList<>();
         }
         
-        try (FileInputStream fis = new FileInputStream(FILE_PATH);
+        try (FileInputStream fis = new FileInputStream(filePath);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
             List<Warehouse> warehouses = (List<Warehouse>) ois.readObject();
-            System.out.println("✓ Tải kho thành công! Tổng cộng: " + warehouses.size() + " sản phẩm");
+            System.out.println("✓ Tải kho (" + username + ") thành công!");
             return warehouses;
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("✗ Lỗi khi tải file: " + e.getMessage());
@@ -52,12 +57,12 @@ public class WarehouseDatabase {
     
     // Kiểm tra file có tồn tại không
     public boolean fileExists() {
-        return new File(FILE_PATH).exists();
+        return new File(filePath).exists();
     }
     
     // Xóa file
     public boolean deleteFile() {
-        File file = new File(FILE_PATH);
+        File file = new File(filePath);
         if (file.exists()) {
             return file.delete();
         }
@@ -66,6 +71,6 @@ public class WarehouseDatabase {
     
     // Lấy đường dẫn file
     public String getFilePath() {
-        return new File(FILE_PATH).getAbsolutePath();
+        return new File(filePath).getAbsolutePath();
     }
 }

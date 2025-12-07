@@ -6,14 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EmployeeDatabase - Xử lý lưu/tải dữ liệu nhân viên
- * Sử dụng serialization để lưu dữ liệu vào file
+ * EmployeeDatabase - Lưu dữ liệu nhân viên riêng theo username
+ * File name format: username_employees.dat
  */
 public class EmployeeDatabase {
-    private static final String FILE_NAME = "employees.dat";
     private List<Employee> employees;
+    private String username;
+    private String filePath;
     
-    public EmployeeDatabase() {
+    public EmployeeDatabase(String username) {
+        this.username = username;
+        this.filePath = username + "_employees.dat";
         employees = loadEmployees();
     }
     
@@ -21,7 +24,7 @@ public class EmployeeDatabase {
      * Tải danh sách nhân viên từ file
      */
     private List<Employee> loadEmployees() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
             return (List<Employee>) ois.readObject();
         } catch (Exception e) {
             return new ArrayList<>();
@@ -32,7 +35,7 @@ public class EmployeeDatabase {
      * Lưu danh sách nhân viên vào file
      */
     private void saveEmployees() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
             oos.writeObject(employees);
         } catch (IOException e) {
             e.printStackTrace();

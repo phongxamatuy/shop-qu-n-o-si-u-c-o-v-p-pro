@@ -11,25 +11,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * OrderController - Quản lý đơn hàng riêng theo username
+ * Mỗi user có file orders riêng: username_orders.dat
+ */
 public class OrderController {
     private OrderManagementView view;
     private List<Order> orderList;
     private OrderDatabase orderDatabase;
+    private String username;
     
-    public OrderController(OrderManagementView view) {
+    public OrderController(OrderManagementView view, String username) {
         this.view = view;
-        this.orderDatabase = new OrderDatabase();
+        this.username = username;
+        this.orderDatabase = new OrderDatabase(username);
         this.orderList = new ArrayList<>();
         
-        // Khởi tạo event listeners
         initController();
-        
-        // Tải dữ liệu từ file database
         loadOrdersFromDatabase();
     }
     
     private void initController() {
-        // Sự kiện nút Thêm
         view.getBtnAdd().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -37,7 +39,6 @@ public class OrderController {
             }
         });
         
-        // Sự kiện nút Cập nhật
         view.getBtnUpdate().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,7 +46,6 @@ public class OrderController {
             }
         });
         
-        // Sự kiện nút Xóa
         view.getBtnDelete().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -53,7 +53,6 @@ public class OrderController {
             }
         });
         
-        // Sự kiện nút Tìm kiếm
         view.getBtnSearch().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -61,7 +60,6 @@ public class OrderController {
             }
         });
         
-        // Sự kiện Enter trong ô tìm kiếm
         view.getTxtSearch().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -72,30 +70,26 @@ public class OrderController {
     
     // Tải dữ liệu từ database
     private void loadOrdersFromDatabase() {
-        // Nếu file không tồn tại, load dữ liệu mẫu
         if (!orderDatabase.fileExists()) {
             loadSampleData();
             saveOrdersToDatabase();
         } else {
-            // Tải từ file
             List<Order> loadedOrders = orderDatabase.loadOrders();
             if (!loadedOrders.isEmpty()) {
                 orderList = loadedOrders;
             } else {
-                // Nếu file rỗng, load dữ liệu mẫu
                 loadSampleData();
                 saveOrdersToDatabase();
             }
         }
         
-        // Hiển thị lên bảng
         refreshTable();
     }
     
     // Lưu danh sách đơn hàng vào database
     private void saveOrdersToDatabase() {
         if (orderDatabase.saveOrders(orderList)) {
-            System.out.println("✓ Dữ liệu đã được lưu vào: " + orderDatabase.getFilePath());
+            System.out.println("✓ Dữ liệu đã được lưu: " + orderDatabase.getFilePath());
         } else {
             System.err.println("✗ Lỗi lưu dữ liệu!");
         }
@@ -104,7 +98,6 @@ public class OrderController {
     // Thêm đơn hàng mới
     private void addOrder() {
         try {
-            // Lấy dữ liệu từ view
             String orderId = view.getTxtOrderId().getText().trim();
             String customerName = view.getTxtCustomerName().getText().trim();
             String productName = view.getTxtProductName().getText().trim();
@@ -112,26 +105,19 @@ public class OrderController {
             String priceStr = view.getTxtPrice().getText().trim();
             String status = (String) view.getCmbStatus().getSelectedItem();
             
-            // Validate dữ liệu
             if (orderId.isEmpty() || customerName.isEmpty() || productName.isEmpty() 
                     || quantityStr.isEmpty() || priceStr.isEmpty()) {
                 JOptionPane.showMessageDialog(view, 
-                    "Vui lòng nhập đầy đủ thông tin!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Kiểm tra mã đơn hàng đã tồn tại
             if (isOrderIdExists(orderId)) {
                 JOptionPane.showMessageDialog(view, 
-                    "Mã đơn hàng đã tồn tại!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Mã đơn hàng đã tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Parse số - loại bỏ dấu phẩy nếu có
             quantityStr = quantityStr.replace(",", "");
             priceStr = priceStr.replace(",", "");
             
@@ -140,51 +126,32 @@ public class OrderController {
             
             if (quantity <= 0 || price <= 0) {
                 JOptionPane.showMessageDialog(view, 
-                    "Số lượng và giá phải lớn hơn 0!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Số lượng và giá phải lớn hơn 0!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Tạo đơn hàng mới
             Order order = new Order(orderId, customerName, productName, quantity, price, status);
             
-            // Kiểm tra hợp lệ
             if (!order.isValid()) {
                 JOptionPane.showMessageDialog(view, 
-                    "Dữ liệu đơn hàng không hợp lệ!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Dữ liệu đơn hàng không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Thêm vào danh sách
             orderList.add(order);
-            
-            // Lưu vào database
             saveOrdersToDatabase();
-            
-            // Cập nhật bảng
             refreshTable();
-            
-            // Xóa form
             clearForm();
             
             JOptionPane.showMessageDialog(view, 
-                "Thêm đơn hàng thành công!", 
-                "Thành công", 
-                JOptionPane.INFORMATION_MESSAGE);
+                "Thêm đơn hàng thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
             
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(view, 
-                "Số lượng và giá phải là số hợp lệ!\n" + e.getMessage(), 
-                "Lỗi", 
-                JOptionPane.ERROR_MESSAGE);
+                "Số lượng và giá phải là số hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view, 
-                "Có lỗi xảy ra: " + e.getMessage(), 
-                "Lỗi", 
-                JOptionPane.ERROR_MESSAGE);
+                "Có lỗi xảy ra: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -195,24 +162,18 @@ public class OrderController {
             
             if (orderId.isEmpty()) {
                 JOptionPane.showMessageDialog(view, 
-                    "Vui lòng chọn đơn hàng cần cập nhật!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Vui lòng chọn đơn hàng cần cập nhật!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Tìm đơn hàng
             Order order = findOrderById(orderId);
             
             if (order == null) {
                 JOptionPane.showMessageDialog(view, 
-                    "Không tìm thấy đơn hàng!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Không tìm thấy đơn hàng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Cập nhật thông tin
             String customerName = view.getTxtCustomerName().getText().trim();
             String productName = view.getTxtProductName().getText().trim();
             String quantityStr = view.getTxtQuantity().getText().trim();
@@ -222,13 +183,10 @@ public class OrderController {
             if (customerName.isEmpty() || productName.isEmpty() 
                     || quantityStr.isEmpty() || priceStr.isEmpty()) {
                 JOptionPane.showMessageDialog(view, 
-                    "Vui lòng nhập đầy đủ thông tin!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Parse số - loại bỏ dấu phẩy nếu có
             quantityStr = quantityStr.replace(",", "");
             priceStr = priceStr.replace(",", "");
             
@@ -237,43 +195,29 @@ public class OrderController {
             
             if (quantity <= 0 || price <= 0) {
                 JOptionPane.showMessageDialog(view, 
-                    "Số lượng và giá phải lớn hơn 0!", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
+                    "Số lượng và giá phải lớn hơn 0!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Cập nhật
             order.setCustomerName(customerName);
             order.setProductName(productName);
             order.setQuantity(quantity);
             order.setPrice(price);
             order.setStatus(status);
             
-            // Lưu vào database
             saveOrdersToDatabase();
-            
-            // Refresh bảng
             refreshTable();
-            
-            // Xóa form
             clearForm();
             
             JOptionPane.showMessageDialog(view, 
-                "Cập nhật đơn hàng thành công!", 
-                "Thành công", 
-                JOptionPane.INFORMATION_MESSAGE);
+                "Cập nhật đơn hàng thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
             
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(view, 
-                "Số lượng và giá phải là số hợp lệ!\n" + e.getMessage(), 
-                "Lỗi", 
-                JOptionPane.ERROR_MESSAGE);
+                "Số lượng và giá phải là số hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view, 
-                "Có lỗi xảy ra: " + e.getMessage(), 
-                "Lỗi", 
-                JOptionPane.ERROR_MESSAGE);
+                "Có lỗi xảy ra: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -283,16 +227,12 @@ public class OrderController {
         
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(view, 
-                "Vui lòng chọn đơn hàng cần xóa!", 
-                "Lỗi", 
-                JOptionPane.ERROR_MESSAGE);
+                "Vui lòng chọn đơn hàng cần xóa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         int confirm = JOptionPane.showConfirmDialog(view, 
-            "Bạn có chắc chắn muốn xóa đơn hàng này?", 
-            "Xác nhận", 
-            JOptionPane.YES_NO_OPTION);
+            "Bạn có chắc chắn muốn xóa đơn hàng này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         
         if (confirm == JOptionPane.YES_OPTION) {
             String orderId = view.getTableModel().getValueAt(selectedRow, 0).toString();
@@ -300,17 +240,12 @@ public class OrderController {
             
             if (order != null) {
                 orderList.remove(order);
-                
-                // Lưu vào database
                 saveOrdersToDatabase();
-                
                 refreshTable();
                 clearForm();
                 
                 JOptionPane.showMessageDialog(view, 
-                    "Xóa đơn hàng thành công!", 
-                    "Thành công", 
-                    JOptionPane.INFORMATION_MESSAGE);
+                    "Xóa đơn hàng thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -337,9 +272,7 @@ public class OrderController {
         
         if (filteredOrders.isEmpty()) {
             JOptionPane.showMessageDialog(view, 
-                "Không tìm thấy kết quả!", 
-                "Thông báo", 
-                JOptionPane.INFORMATION_MESSAGE);
+                "Không tìm thấy kết quả!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         }
     }
     
@@ -348,7 +281,7 @@ public class OrderController {
         updateTable(orderList);
     }
     
-    // Cập nhật bảng với danh sách
+    // Cập nhật bảng
     private void updateTable(List<Order> orders) {
         DefaultTableModel model = view.getTableModel();
         model.setRowCount(0);
@@ -369,7 +302,7 @@ public class OrderController {
         view.getOrderTable().clearSelection();
     }
     
-    // Kiểm tra mã đơn hàng đã tồn tại
+    // Kiểm tra mã đơn hàng
     private boolean isOrderIdExists(String orderId) {
         return orderList.stream()
             .anyMatch(order -> order.getOrderId().equals(orderId));
@@ -388,11 +321,8 @@ public class OrderController {
         orderList.add(new Order("ORD001", "Nguyễn Văn A", "Áo Niketech", 1, 250000, "Chờ xử lý"));
         orderList.add(new Order("ORD002", "Trần Thị B", "Quần jean ống rộng", 2, 290000, "Đang giao"));
         orderList.add(new Order("ORD003", "Lê Văn C", "Áo khoác gió", 1, 220000, "Đã giao"));
-        orderList.add(new Order("ORD004", "Phạm Thị D", "Váy xếp ly", 1, 450000, "Chờ xử lý"));
-        orderList.add(new Order("ORD005", "Hoàng Văn E", "Áo phông", 3, 150000, "Đã hủy"));
     }
     
-    // Getters
     public List<Order> getOrderList() {
         return orderList;
     }

@@ -7,14 +7,20 @@ import model.Customer;
 import controller.CustomerController;
 import java.util.ArrayList;
 
+/**
+ * CustomerManagementView - Giao diện quản lý khách hàng
+ * Khởi tạo controller SAU khi UI xong để tránh null pointer
+ */
 public class CustomerManagementView extends JFrame {
     private CustomerController controller;
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField txtId, txtName, txtPhone, txtEmail;
     
-    public CustomerManagementView() {
+    public CustomerManagementView(String username) {
         initComponents();
+        // Khởi tạo controller SAU khi UI tạo xong
+        this.controller = new CustomerController(this, username);
     }
     
     private void initComponents() {
@@ -37,9 +43,6 @@ public class CustomerManagementView extends JFrame {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         
         add(mainPanel);
-        
-        // Khởi tạo controller SAU khi UI tạo xong
-        this.controller = new CustomerController(this);
     }
     
     private JPanel createFormPanel() {

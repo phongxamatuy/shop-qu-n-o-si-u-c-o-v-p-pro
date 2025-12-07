@@ -8,6 +8,10 @@ import controller.ProductController;
 import controller.CustomerController;
 import controller.EmployeeController;
 
+/**
+ * MainView - Giao diện chính ứng dụng
+ * Truyền username tới tất cả controller để lưu data riêng per user
+ */
 public class MainView extends JFrame {
     // Màu sắc chính
     private static final Color BROWN_HEADER = new Color(139, 90, 60);
@@ -235,38 +239,37 @@ public class MainView extends JFrame {
     }
     
     /**
-     * Mở cửa sổ Quản Lý Sản Phẩm
+     * Mở cửa sổ Quản Lý Sản Phẩm - Truyền username
      */
     private void openProductManagement() {
-        ProductManagementView productView = new ProductManagementView();
-        ProductController productController = new ProductController();
+        ProductManagementView productView = new ProductManagementView(username);
         productView.setVisible(true);
     }
     
     /**
-     * Mở cửa sổ Quản Lý Đơn Hàng
+     * Mở cửa sổ Quản Lý Đơn Hàng - Truyền username
      */
     private void openOrderManagement() {
         OrderManagementView orderView = new OrderManagementView();
-        OrderController orderController = new OrderController(orderView);
+        OrderController orderController = new OrderController(orderView, username);
         orderView.setVisible(true);
     }
     
     /**
-     * Mở cửa sổ Quản Lý Kho
+     * Mở cửa sổ Quản Lý Kho - Truyền username
      */
     private void openWarehouseManagement() {
         WarehouseManagementView warehouseView = new WarehouseManagementView();
-        WarehouseController warehouseController = new WarehouseController(warehouseView);
+        WarehouseController warehouseController = new WarehouseController(warehouseView, username);
         warehouseView.setVisible(true);
     }
     
     /**
-     * Mở cửa sổ Quản Lý Khách Hàng
+     * Mở cửa sổ Quản Lý Khách Hàng - Truyền username
      */
     private void openCustomerManagement() {
         try {
-            CustomerManagementView customerView = new CustomerManagementView();
+            CustomerManagementView customerView = new CustomerManagementView(username);
             customerView.setVisible(true);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
@@ -278,12 +281,12 @@ public class MainView extends JFrame {
     }
     
     /**
-     * Mở cửa sổ Quản Lý Nhân Viên
+     * Mở cửa sổ Quản Lý Nhân Viên - Truyền username
      */
     private void openEmployeeManagement() {
         try {
             EmployeeManagementView employeeView = new EmployeeManagementView();
-            EmployeeController employeeController = new EmployeeController(employeeView);
+            EmployeeController employeeController = new EmployeeController(employeeView, username);
             employeeView.setVisible(true);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
@@ -302,7 +305,7 @@ public class MainView extends JFrame {
         dashboard.setBackground(LIGHT_BROWN);
         dashboard.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         
-        JLabel lblTitle = new JLabel("☑ Tổng Quan Hệ Thống");
+        JLabel lblTitle = new JLabel(" Tổng Quan Hệ Thống");
         lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
         

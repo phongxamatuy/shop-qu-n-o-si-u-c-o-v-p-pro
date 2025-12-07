@@ -3,8 +3,13 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 import controller.LoginController;
 
+/**
+ * LoginView - Giao diện đăng nhập
+ * Truyền username tới MainView để lưu data riêng per user
+ */
 public class LoginView extends JFrame {
     private JTextField txtUsername;
     private JPasswordField txtPassword;
@@ -148,13 +153,10 @@ public class LoginView extends JFrame {
         // Button Đăng Nhập
         btnLogin = createStyledButton("ĐĂNG NHẬP");
         btnLogin.addActionListener(e -> {
-            String username = txtUsername.getText();
+            String username = txtUsername.getText().trim();
             String password = new String(txtPassword.getPassword());
             
-            // Xóa placeholder nếu chưa nhập
-            if (username.equals("Tên đăng nhập")) username = "";
-            if (password.equals("Mật khẩu")) password = "";
-            
+            // Gửi username tới controller để truyền đến MainView
             controller.handleLogin(username, password);
         });
         panel.add(btnLogin);
@@ -167,7 +169,12 @@ public class LoginView extends JFrame {
         panel.add(separator);
         panel.add(Box.createVerticalStrut(20));
         
-        // Thông tin tài khoản mặc định
+        // Ghi chú tài khoản mẫu
+        JLabel lblNote = new JLabel("Tài khoản mẫu: admin / 123456");
+        lblNote.setFont(new Font("Arial", Font.ITALIC, 11));
+        lblNote.setForeground(Color.GRAY);
+        lblNote.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(lblNote);
         
         return panel;
     }
@@ -221,14 +228,9 @@ public class LoginView extends JFrame {
         // Button Đăng Ký
         JButton btnRegister = createStyledButton("ĐĂNG KÝ");
         btnRegister.addActionListener(e -> {
-            String username = txtRegUsername.getText();
+            String username = txtRegUsername.getText().trim();
             String password = new String(txtRegPassword.getPassword());
             String confirmPassword = new String(txtConfirmPassword.getPassword());
-            
-            // Xóa placeholder nếu chưa nhập
-            if (username.equals("Tên đăng nhập")) username = "";
-            if (password.equals("Mật khẩu")) password = "";
-            if (confirmPassword.equals("Xác nhận mật khẩu")) confirmPassword = "";
             
             controller.handleRegister(username, password, confirmPassword);
         });
@@ -280,7 +282,6 @@ public class LoginView extends JFrame {
             }
         });
         
-        // Khởi tạo password field không hiện ký tự khi là placeholder
         if (isPassword) {
             ((JPasswordField) textField).setEchoChar((char) 0);
         }
@@ -302,7 +303,6 @@ public class LoginView extends JFrame {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // Hover effect
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -328,7 +328,6 @@ public class LoginView extends JFrame {
     
     public void switchToLoginTab() {
         tabbedPane.setSelectedIndex(0);
-        // Clear các field trong tab đăng nhập
         txtUsername.setText("Tên đăng nhập");
         txtUsername.setForeground(Color.GRAY);
         txtPassword.setText("Mật khẩu");

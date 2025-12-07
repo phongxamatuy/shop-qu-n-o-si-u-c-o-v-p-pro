@@ -6,18 +6,24 @@ import java.awt.*;
 import controller.ProductController;
 import model.Product;
 
+/**
+ * ProductManagementView - Giao diện quản lý sản phẩm
+ * Nhận username từ MainView để lưu data riêng per user
+ */
 public class ProductManagementView extends JFrame {
     private static final Color BROWN_HEADER = new Color(139, 90, 60);
     private static final Color LIGHT_BROWN = new Color(222, 204, 190);
     private static final Color BUTTON_COLOR = new Color(139, 90, 60);
     
-    private final ProductController controller = new ProductController();
+    private ProductController controller;
     private JTable productTable;
     private DefaultTableModel tableModel;
     
     private JTextField txtId, txtName, txtCategory, txtPrice, txtQuantity, txtSearch;
     
-    public ProductManagementView() {
+    public ProductManagementView(String username) {
+        // Khởi tạo controller với username
+        this.controller = new ProductController(username);
         initComponents();
         loadProducts();
     }

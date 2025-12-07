@@ -1,23 +1,40 @@
 package database;
+
 import model.Product;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * ProductDatabase - Lưu dữ liệu sản phẩm riêng theo username
+ * File name format: username_products.dat
+ */
 public class ProductDatabase {
-    private static final String FILE_NAME = "products.dat";
-
-    public static ArrayList<Product> load() {
+    
+    /**
+     * Tải sản phẩm của user từ file
+     * Filename: username_products.dat
+     */
+    public static ArrayList<Product> load(String username) {
+        String fileName = username + "_products.dat";
         try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME));
-            return (ArrayList<Product>) ois.readObject();
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
+            ArrayList<Product> products = (ArrayList<Product>) ois.readObject();
+            ois.close();
+            return products;
         } catch (Exception e) {
+            // File chưa tồn tại - trả về list rỗng
             return new ArrayList<>();
         }
     }
-
-    public static void save(ArrayList<Product> products) {
+    
+    /**
+     * Lưu sản phẩm của user vào file
+     * Filename: username_products.dat
+     */
+    public static void save(String username, ArrayList<Product> products) {
+        String fileName = username + "_products.dat";
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
             oos.writeObject(products);
             oos.close();
         } catch (Exception e) {
