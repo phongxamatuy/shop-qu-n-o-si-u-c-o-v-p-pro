@@ -218,7 +218,7 @@ public class EmployeeManagementView extends JFrame {
         btn_Add = new JButton("Thêm");
         btn_Remove = new JButton("Xóa");
         btn_Update = new JButton("Cập nhật");
-        btn_Show = new JButton("Hiển thị");
+        btn_Show = new JButton("Tìm kiếm");
         
         // Style buttons
         for (JButton btn : new JButton[]{btn_Add, btn_Remove, btn_Update, btn_Show}) {
