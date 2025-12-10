@@ -1,10 +1,9 @@
 package view;
 
-import javax.swing.*;
+import controller.LoginController;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
-import controller.LoginController;
+import javax.swing.*;
 
 /**
  * LoginView - Giao diện đăng nhập
@@ -84,19 +83,19 @@ public class LoginView extends JFrame {
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
-        header.setBorder(BorderFactory.createEmptyBorder(30, 20, 20, 20));
+        header.setBorder(BorderFactory.createEmptyBorder(20, 20, 15, 20));
         
         // Logo
         JLabel lblLogo = new JLabel("👕", SwingConstants.CENTER);
-        lblLogo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 50));
+        lblLogo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 40));
         lblLogo.setForeground(BROWN_HEADER);
         
         JLabel lblTitle = new JLabel("FASHION STORE", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 32));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 28));
         lblTitle.setForeground(BROWN_HEADER);
         
         JLabel lblSubtitle = new JLabel("Hệ Thống Quản Lý Shop Quần Áo", SwingConstants.CENTER);
-        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 13));
+        lblSubtitle.setFont(new Font("Arial", Font.PLAIN, 11));
         lblSubtitle.setForeground(DARKER_BROWN);
         
         JPanel logoTitlePanel = new JPanel(new GridLayout(3, 1, 0, 8));
@@ -151,24 +150,23 @@ public class LoginView extends JFrame {
         panel.add(Box.createVerticalStrut(30));
         
         // Button Đăng Nhập
-        btnLogin = createStyledButton("ĐĂNG NHẬP");
+        JButton btnLogin = createStyledButton("ĐĂNG NHẬP");
         btnLogin.addActionListener(e -> {
             String username = txtUsername.getText().trim();
             String password = new String(txtPassword.getPassword());
-            
-            // Gửi username tới controller để truyền đến MainView
             controller.handleLogin(username, password);
         });
         panel.add(btnLogin);
+        panel.add(Box.createVerticalGlue());
         
         return panel;
     }
     
     private JPanel createRegisterPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(WHITE);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
         
         // Icon và tiêu đề
         JLabel lblIcon = new JLabel("📝", SwingConstants.CENTER);
@@ -185,30 +183,30 @@ public class LoginView extends JFrame {
         lblSubtitle.setForeground(ACCENT_COLOR);
         lblSubtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        panel.add(lblIcon);
-        panel.add(Box.createVerticalStrut(12));
-        panel.add(lblTitle);
-        panel.add(Box.createVerticalStrut(6));
-        panel.add(lblSubtitle);
-        panel.add(Box.createVerticalStrut(35));
+        contentPanel.add(lblIcon);
+        contentPanel.add(Box.createVerticalStrut(12));
+        contentPanel.add(lblTitle);
+        contentPanel.add(Box.createVerticalStrut(6));
+        contentPanel.add(lblSubtitle);
+        contentPanel.add(Box.createVerticalStrut(35));
         
         // Username
         JTextField txtRegUsername = new JTextField(20);
         JPanel usernamePanel = createInputPanel("👤", txtRegUsername, "Tên đăng nhập", false);
-        panel.add(usernamePanel);
-        panel.add(Box.createVerticalStrut(18));
+        contentPanel.add(usernamePanel);
+        contentPanel.add(Box.createVerticalStrut(18));
         
         // Password
         JPasswordField txtRegPassword = new JPasswordField(20);
         JPanel passwordPanel = createInputPanel("🔒", txtRegPassword, "Mật khẩu", true);
-        panel.add(passwordPanel);
-        panel.add(Box.createVerticalStrut(18));
+        contentPanel.add(passwordPanel);
+        contentPanel.add(Box.createVerticalStrut(18));
         
         // Confirm Password
         JPasswordField txtConfirmPassword = new JPasswordField(20);
         JPanel confirmPanel = createInputPanel("🔑", txtConfirmPassword, "Xác nhận mật khẩu", true);
-        panel.add(confirmPanel);
-        panel.add(Box.createVerticalStrut(30));
+        contentPanel.add(confirmPanel);
+        contentPanel.add(Box.createVerticalStrut(30));
         
         // Button Đăng Ký
         JButton btnRegister = createStyledButton("ĐĂNG KÝ");
@@ -216,10 +214,22 @@ public class LoginView extends JFrame {
             String username = txtRegUsername.getText().trim();
             String password = new String(txtRegPassword.getPassword());
             String confirmPassword = new String(txtConfirmPassword.getPassword());
-            
             controller.handleRegister(username, password, confirmPassword);
         });
-        panel.add(btnRegister);
+        contentPanel.add(btnRegister);
+        contentPanel.add(Box.createVerticalGlue());
+        
+        // Thêm vào ScrollPane
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBackground(WHITE);
+        scrollPane.getViewport().setBackground(WHITE);
+        scrollPane.setBorder(null);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(WHITE);
+        panel.add(scrollPane, BorderLayout.CENTER);
         
         return panel;
     }

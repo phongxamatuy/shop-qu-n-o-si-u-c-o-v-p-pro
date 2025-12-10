@@ -87,31 +87,31 @@ public class ProductManagementView extends JFrame {
         formPanel.add(Box.createVerticalStrut(20));
         
         // ID
-        formPanel.add(createLabel("Mã Sản Phẩm:"));
+        formPanel.add(createLabel("Mã Sản Phẩm"));
         txtId = createTextField();
         formPanel.add(txtId);
         formPanel.add(Box.createVerticalStrut(10));
         
         // Tên
-        formPanel.add(createLabel("Tên Sản Phẩm:"));
+        formPanel.add(createLabel("Tên Sản Phẩm"));
         txtName = createTextField();
         formPanel.add(txtName);
         formPanel.add(Box.createVerticalStrut(10));
         
         // Loại
-        formPanel.add(createLabel("Loại Quần Áo:"));
+        formPanel.add(createLabel("Loại Quần Áo"));
         txtCategory = createTextField();
         formPanel.add(txtCategory);
         formPanel.add(Box.createVerticalStrut(10));
         
         // Giá
-        formPanel.add(createLabel("Giá:"));
+        formPanel.add(createLabel("Giá"));
         txtPrice = createTextField();
         formPanel.add(txtPrice);
         formPanel.add(Box.createVerticalStrut(10));
         
         // Số lượng
-        formPanel.add(createLabel("Số Lượng:"));
+        formPanel.add(createLabel("Số Lượng"));
         txtQuantity = createTextField();
         formPanel.add(txtQuantity);
         formPanel.add(Box.createVerticalStrut(20));

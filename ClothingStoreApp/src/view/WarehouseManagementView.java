@@ -144,7 +144,7 @@ public class WarehouseManagementView extends JFrame {
         panel.add(searchPanel, BorderLayout.NORTH);
         
         // Bảng
-        String[] columns = {"Mã SP", "Tên Sản Phẩm", "Danh Mục", "Số Lượng", "Tồn Tối Thiểu", "Vị Trí", "Kho", "Trạng Thái"};
+        String[] columns = {"Mã SP", "Tên Sản Phẩm", "Danh Mục", "Số Lượng", "Tồn Tối Thiểu", "Trạng Thái", "Kho", "Vị Trí"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
