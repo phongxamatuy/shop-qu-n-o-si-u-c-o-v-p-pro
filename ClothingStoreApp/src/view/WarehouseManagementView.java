@@ -1,9 +1,9 @@
 package view;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class WarehouseManagementView extends JFrame {
     private JTable warehouseTable;
@@ -144,7 +144,7 @@ public class WarehouseManagementView extends JFrame {
         panel.add(searchPanel, BorderLayout.NORTH);
         
         // Bảng
-        String[] columns = {"Mã SP", "Tên Sản Phẩm", "Danh Mục", "Số Lượng", "Tồn Tối Thiểu", "Trạng Thái", "Kho", "Vị Trí"};
+        String[] columns = {"Mã SP", "Tên Sản Phẩm", "Danh Mục", "Số Lượng", "Tồn Tối Thiểu", "Trạng Thái", "Vị Tri", "Kho"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -163,7 +163,7 @@ public class WarehouseManagementView extends JFrame {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 
                 if (!isSelected) {
-                    String status = tableModel.getValueAt(row, 7).toString();
+                    String status = tableModel.getValueAt(row, 5).toString(); // Cột 5 là Trạng Thái
                     if (status.equals("Hết hàng")) {
                         c.setBackground(new Color(255, 200, 200));
                     } else if (status.equals("Sắp hết")) {
@@ -176,19 +176,19 @@ public class WarehouseManagementView extends JFrame {
             }
         });
         
-        // Sự kiện click vào bảng
+        // Sự kiện click vào bảng - ĐÃ SỬA LẠI CÁC CHỈ SỐ CỘT
         warehouseTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = warehouseTable.getSelectedRow();
                 if (row >= 0) {
-                    txtProductId.setText(tableModel.getValueAt(row, 0).toString());
-                    txtProductName.setText(tableModel.getValueAt(row, 1).toString());
-                    txtCategory.setText(tableModel.getValueAt(row, 2).toString());
-                    txtQuantity.setText(tableModel.getValueAt(row, 3).toString());
-                    txtMinStock.setText(tableModel.getValueAt(row, 4).toString());
-                    txtLocation.setText(tableModel.getValueAt(row, 5).toString());
-                    cmbWarehouse.setSelectedItem(tableModel.getValueAt(row, 6).toString());
+                    txtProductId.setText(tableModel.getValueAt(row, 0).toString());      // Mã SP
+                    txtProductName.setText(tableModel.getValueAt(row, 1).toString());    // Tên SP
+                    txtCategory.setText(tableModel.getValueAt(row, 2).toString());       // Danh Mục
+                    txtQuantity.setText(tableModel.getValueAt(row, 3).toString());       // Số Lượng
+                    txtMinStock.setText(tableModel.getValueAt(row, 4).toString());       // Tồn Tối Thiểu
+                    txtLocation.setText(tableModel.getValueAt(row, 6).toString());       // Vị Trí (cột 6)
+                    cmbWarehouse.setSelectedItem(tableModel.getValueAt(row, 7).toString()); // Kho (cột 7)
                 }
             }
         });
