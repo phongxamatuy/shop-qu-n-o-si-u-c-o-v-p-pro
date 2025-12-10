@@ -1,12 +1,10 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
+import controller.EmployeeController;
 import controller.OrderController;
 import controller.WarehouseController;
-import controller.ProductController;
-import controller.CustomerController;
-import controller.EmployeeController;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  * MainView - Giao diện chính ứng dụng
@@ -326,18 +324,27 @@ public class MainView extends JFrame {
      * Mở cửa sổ Quản Lý Nhân Viên - Truyền username
      */
     private void openEmployeeManagement() {
-        try {
-            EmployeeManagementView employeeView = new EmployeeManagementView();
+    try {
+        // Truyền role vào EmployeeManagementView để kiểm tra quyền
+        EmployeeManagementView employeeView = new EmployeeManagementView(role);
+        
+        // Chỉ khởi tạo controller và hiển thị nếu là ADMIN
+        if ("ADMIN".equalsIgnoreCase(role)) {
             EmployeeController employeeController = new EmployeeController(employeeView, username);
             employeeView.setVisible(true);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Lỗi: " + ex.getMessage(), 
-                "Lỗi", 
-                JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
         }
+        // Nếu không phải ADMIN, EmployeeManagementView sẽ tự động:
+        // - Hiển thị thông báo "Không có quyền truy cập"
+        // - Đóng cửa sổ
+        
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, 
+            "Lỗi: " + ex.getMessage(), 
+            "Lỗi", 
+            JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace();
     }
+}
     
     /**
      * Tạo dashboard với các card thống kê
@@ -395,9 +402,10 @@ public class MainView extends JFrame {
         contentPanel.add(lblTitle);
         contentPanel.add(lblIcon);
         contentPanel.add(lblValue);
-        
         card.add(contentPanel, BorderLayout.CENTER);
-        
         return card;
     }
+    
+
+
 }

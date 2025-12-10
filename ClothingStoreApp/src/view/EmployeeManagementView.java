@@ -1,14 +1,15 @@
 package view;
 
+import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
 
 /**
  * EmployeeManagementView - Giao diện quản lý nhân viên
  * Cung cấp form nhập liệu và bảng hiển thị danh sách nhân viên
+ * CHỈ ADMIN MỚI CÓ QUYỀN TRUY CẬP
  */
 public class EmployeeManagementView extends JFrame {
     // Table
@@ -29,15 +30,56 @@ public class EmployeeManagementView extends JFrame {
     public JButton btn_Update;
     public JButton btn_Show;
     
-    public EmployeeManagementView() {
+    // Biến lưu role của user đang đăng nhập
+    private String currentUserRole;
+    
+    /**
+     * Constructor với tham số role
+     * @param userRole Role của user đang đăng nhập
+     */
+    public EmployeeManagementView(String userRole) {
+        this.currentUserRole = userRole;
+        
+        // Kiểm tra quyền truy cập TRƯỚC KHI khởi tạo giao diện
+        if (!checkPermission()) {
+            // Hiển thị thông báo không có quyền
+            showAccessDeniedMessage();
+            // Đóng cửa sổ ngay lập tức
+            dispose();
+            return;
+        }
+        
+        // Nếu có quyền, khởi tạo giao diện bình thường
         initComponents();
+    }
+    
+    /**
+     * Kiểm tra quyền truy cập
+     * @return true nếu là ADMIN, false nếu không
+     */
+    private boolean checkPermission() {
+        return "ADMIN".equalsIgnoreCase(currentUserRole);
+    }
+    
+    /**
+     * Hiển thị thông báo không có quyền truy cập
+     */
+    private void showAccessDeniedMessage() {
+        JOptionPane.showMessageDialog(
+            null,
+            "BẠN KHÔNG CÓ QUYỀN TRUY CẬP!\n\n" +
+            "Chức năng quản lý nhân viên chỉ dành cho ADMIN.\n" +
+            "Vui lòng liên hệ quản trị viên nếu bạn cần truy cập.",
+            "Truy cập bị từ chối",
+            JOptionPane.ERROR_MESSAGE
+        );
     }
     
     /**
      * Khởi tạo các thành phần giao diện
      */
     private void initComponents() {
-        setTitle("Quản Lý Nhân Viên");
+        setTitle("Quản Lý Nhân Viên - ADMIN");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 700);
         setLocationRelativeTo(null);
@@ -208,4 +250,6 @@ public class EmployeeManagementView extends JFrame {
     public void showMessage(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
+    
+    
 }
